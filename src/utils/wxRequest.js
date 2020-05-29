@@ -6,7 +6,7 @@ const API_KEY = '9b2092171fa9c2bac40025784016bef0'
 const AUTH_ID = '4445f41e175bf2f3c699edf706884767'
 const DATA_TYPE = 'text'
 const SAMPLE_RATE = '16000'
-const SCENE = 'main_box'
+const SCENE = 'main'
 const RESULT_LEVEL = 'complete'
 //const PERS_PARAM = "{\\\"auth_id\\\":\\\"4445f41e175bf2f3c699edf706884767\\\"}"
 

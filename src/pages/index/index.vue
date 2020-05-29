@@ -449,56 +449,130 @@
 				});
 			},
 
+//     txtAnswer(resData) {
+//     let that = this
+//     answerTextz(resData).then(res => {
+//         if (res.data.code == '0') { 
+//             let answerData = res.data.data
+//             answerData.forEach(e => {
+//                 if (e.sub == 'tpp') {
+// 					let content = JSON.parse(e.content)
+// 					console.log(content)
+// 					let moreResults = content.intent.moreResults
+//                     moreResults.forEach(e => {
+//                         if (e.rc == 0 && (e.semantic.slots.hasOwnProperty('song') ||e.semantic.slots.hasOwnProperty('artist'))) { //搜索歌曲
+//                             if (e.answer.text && e.answer.type != 'NULL') {
+//                                 let tempObj = { //歌曲播放提示
+//                                     type: 3,
+//                                     textDesc: e.answer.text,
+//                                 }
+//                                 that.pushData(tempObj)
+//                                 let audioObj = {
+//                                     type: 2,
+//                                     audioSinger: e.data.result[0].singerName, //歌手
+//                                     audioSrc: e.data.result[0].playUrl, //播放地址
+//                                     audioPic: e.data.result[0].picMin, //专辑图片
+//                                     audioName: e.data.result[0].songName, //歌名
+//                                 }
+//                                 that.pushData(audioObj)
+//                             } else {
+//                                 let tempObj = {
+//                                     type: 3,
+//                                     textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢'
+//                                 }
+//                                 that.pushData(tempObj)
+//                             }
+//                         } else if(e.rc == 0 && e.answer.type == 'NULL' && e.hasOwnProperty('semantic')){
+// 			 						let tempObj1 = {
+// 										type: 3,
+// 										textDesc: '抱歉，没有找到你想要的答案，我会继续学习新技能的',
+// 									 }
+									
+// 								that.pushData(tempObj1);
+// 						} else if(e.rc == 3  && e.hasOwnProperty('semantic')){
+// 			 						let tempObj1 = {
+// 										type: 3,
+// 										textDesc: content.intent.answer.text,
+// 									 }
+// 								that.pushData(tempObj1);
+// 						}
+//                     })
+
+//                 }
+//             })
+//         }
+//     })
+// },
     txtAnswer(resData) {
     let that = this
     answerTextz(resData).then(res => {
         if (res.data.code == '0') { 
-            let answerData = res.data.data
+			let answerData = res.data.data
+			//console.log(answerData)
             answerData.forEach(e => {
                 if (e.sub == 'tpp') {
 					let content = JSON.parse(e.content)
-					console.log(content)
-					let moreResults = content.intent.moreResults
-                    moreResults.forEach(e => {
-                        if (e.rc == 0 && (e.semantic.slots.hasOwnProperty('song') ||e.semantic.slots.hasOwnProperty('artist'))) { //搜索歌曲
-                            if (e.answer.text && e.answer.type != 'NULL') {
+					let intent = content.intent //变成了data字段
+					console.log(intent)
+                                                                         //intent.forEach(e => {
+						if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags'))) {
+                            if (intent.answer.text && intent.type != 'NULL') {
+								 if(intent.semantic.slots.hasOwnProperty('presenter')){
+									console.log('节目')
+									return
+								}
+								
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
-                                    textDesc: e.answer.text,
+                                    textDesc: intent.answer.text,
                                 }
                                 that.pushData(tempObj)
                                 let audioObj = {
                                     type: 2,
-                                    audioSinger: e.data.result[0].singerName, //歌手
-                                    audioSrc: e.data.result[0].playUrl, //播放地址
-                                    audioPic: e.data.result[0].picMin, //专辑图片
-                                    audioName: e.data.result[0].songName, //歌名
-                                }
+                                    audioSinger: intent.data.result[0].singerName, //歌手
+                                    audioSrc: intent.data.result[0].playUrl, //播放地址
+                                    audioPic: intent.data.result[0].picMin, //专辑图片
+                                    audioName: intent.data.result[0].songName, //歌名
+								}
                                 that.pushData(audioObj)
-                            } else {
+                            }  else if(intent.rc == 0 && intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {
                                     type: 3,
-                                    textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢'
+                                    textDesc: intent.answer.text 
                                 }
                                 that.pushData(tempObj)
                             }
-                        } else if(e.rc == 0 && e.answer.type == 'NULL' && e.hasOwnProperty('semantic')){
+						} else if(intent.rc == 0 && !(intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+						|| intent.semantic.slots.hasOwnProperty('genre'))){
+							 if(!intent.hasOwnProperty('data') ){
+							console.log('111')
+							let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.question.text ? intent.answer.question.text : intent.answer.text ,
+									 }
+								that.pushData(tempObj1)
+						} else{  
 			 						let tempObj1 = {
 										type: 3,
-										textDesc: '抱歉，没有找到你想要的答案，我会继续学习新技能的',
+										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
 									 }
-									
-								that.pushData(tempObj1);
-						} else if(e.rc == 3  && e.hasOwnProperty('semantic')){
+									    that.pushData(tempObj1)
+						      }
+						} else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
 			 						let tempObj1 = {
 										type: 3,
-										textDesc: content.intent.answer.text,
+										textDesc: intent.answer.text,
 									 }
-								that.pushData(tempObj1);
+								that.pushData(tempObj1)
+						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {			
+							let tempObj1 = {
+										type: 3,
+										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢' ,
+									 }
+								that.pushData(tempObj1)
 						}
-                    })
-
-                }
+                } 
             })
         }
     })
