@@ -1,5 +1,5 @@
-const host = 'https://autopre.openspeech.cn'
-const host1 = 'http://aquadev.iflytekauto.cn'
+/* //const host = 'https://autopre.openspeech.cn'
+//const host1 = 'http://aquadev.iflytekauto.cn'
 //const imgUrl = 'https://autopre.openspeech.cn/file/' 图片地址
 function request(url, method, data, header = {}) {
 	//wx.showLoading({
@@ -121,4 +121,4 @@ export default {
 	post,
 	host,
 	postaudio,
-}
+} */

@@ -23,7 +23,7 @@ export default {
     //request('/api','get').then(res=>{console.log(res)}).catch(err=>{console.log(err)})
     //request('http://localhost:8009','get').then(res=>{console.log(res)})
      //request('api','get').then(res=>{console.log(res)})
-       answerTextz('上一曲').then((res) => {
+       answerTextz('我想去之心城').then((res) => {
             let a = JSON.parse(res.data.data[1].content)
              //let a = res.data.data
             console.log(a)

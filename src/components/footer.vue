@@ -197,7 +197,7 @@ import { answerTextz } from "@/utils/wxRequest";
 		margin-left: 2vw;
 		margin-right: 20rpx;
 		width: 85%;
-		height: 58%;
+		height: 50%;
 		background-color:rgba(3, 17, 17, 0.164);
 		
 		

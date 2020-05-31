@@ -20,7 +20,7 @@
 						<audio :src="chat.audioSrc" :author="chat.audioSinger" :name="chat.audioName" id="'audio'+ind " :poster="chat.audioPic" controls=true></audio> 
 						</div>
 						
-						<div style="margin-top: 28rpx;" v-if="chat.type == '3'">
+						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '3'">
 							<!--wenben-->
 							<div class="dialogBox">
 								
@@ -288,7 +288,6 @@
 
 <script>
 	import recordVoice from "@/components/recording"
-	import topFix from "@/components/topFix"
 	import recommendList from "@/components/recommendList"
 	import footComponent from "@/components/footer"
 	import textDetail from "@/components/textDetail"
@@ -308,10 +307,10 @@
 	let homeListQuestion = [];
 	export default {
 		onLoad() {
-			this.chatBoxData = [];
-			this.getData();
-			this.getGuessData();
-			this.getHomeQuestion();
+			this.chatBoxData = [
+				{type: 3,
+				textDesc: '你好，很高兴见到你。你可以使用文本或者语音跟我对话，更多功能请在左上角的设置里探索吧~'
+			}]
 		},
 		onUnload() {
 			this.pageNum = 1;
@@ -319,39 +318,29 @@
 		},
 		data() {
 			return {
-				//footShow: false,
-				//audioShow: true,
+				
 				isIphoneX: false,
 				toView: 'bottom0',
 				isVoicing: false, //控制正在说话的动画
-				iconShow: true, //控制输入框的显示
 				agreeShow: true,
-				videoShow: false, //控制视频可以查看
-				mbVisible: false, //控制模板展示
+				videoShow: false, //控制视频可以
 				textData: {
 					visible: false, //控制显示文字答案弹窗
 					textCon: '',
 					detailImg: '',
 					refText: true
 				},
-				chatBoxData: [{
-					type: 11,
-					param: {
-						安全碰撞: "安全碰撞采用超高强度车身，C-NCAP五星安全设计",
-						主动安全: "有L2级智能驾驶"
-					}
-				}],
+				chatBoxData: [],
 				studyListRequests: [],
 				askData: [],
 				pageNum: 1,
 				pageSize: 3,
 				total: '',
 				videoCompentSrc: '', //传给子组件的视频地址
-				//				isDisAgree: false,
-				//				isAgree: false,
 				bottomRequests: [],
 				slectOneList: [],
-				modelData: []
+				modelData: [],
+				map: {},
 			}
 		},
 		mounted() {
@@ -366,78 +355,12 @@
 		},
 		components: {
 			recordVoice,
-			//studyCard,
-			topFix,
-			//guessAskList,
 			recommendList,
 			footComponent,
-			textDetail,
-			//mbDetail,
 			videoDetail,
-			satisfaction,
-			//audioDetail,
 			headDetail,
 		},
 		methods: {
-			// audioControl() {
-			// 	this.audioShow = true
-			// 	console.log(this.audioShow)
-			// },
-			getData() {
-				//技能卡片数据接口有问题
-				this.$httpWX.post({
-					url: '/aimind/indexMain/title/list',
-					data: {}
-				}).then(res => {
-					this.studyListRequests = res.data;
-				})
-				//热点标签
-				this.$httpWX.post({
-					url: '/aimind/indexMain/mark/list',
-					data: {}
-				}).then(res => {
-					this.bottomRequests = res.data;
-				})
-			},
-			//获取首页问题引导的数据
-			getHomeQuestion() {
-				this.$httpWX.post({
-					url: '/aimind/indexMain/example/index',
-					//data:{}
-				}).then(res => {
-					this.homeListData = res.data;
-				})
-			},
-			getGuessData() {
-				//猜你想问数据
-				this.$httpWX.post({
-					url: '/aimind/indexMain/question/list',
-					data: {
-						pageNum: this.pageNum,
-						pageSize: this.pageSize
-					}
-				}).then(res => {
-					this.askData = res.items;
-					this.total = res.total;
-					this.pageNum = res.page;
-					this.pageSize = res.size;
-				})
-			},
-			//换一批
-			changePage(page) {
-				this.$httpWX.post({
-					url: '/aimind/indexMain/question/list',
-					data: {
-						pageNum: page,
-						pageSize: '3'
-					}
-				}).then(res => {
-					this.askData = res.items;
-					this.total = res.total;
-					this.pageNum = res.page;
-					this.pageSize = res.size;
-				})
-			},
 			/* 数据放入数组内，可用 */
 			pushData(opt) {
 				let that = this;
@@ -508,21 +431,39 @@
     answerTextz(resData).then(res => {
         if (res.data.code == '0') { 
 			let answerData = res.data.data
-			//console.log(answerData)
+			console.log(answerData)
             answerData.forEach(e => {
                 if (e.sub == 'tpp') {
 					let content = JSON.parse(e.content)
 					let intent = content.intent //变成了data字段
 					console.log(intent)
-                                                                         //intent.forEach(e => {
-						if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+					if(intent.rc == 0 && !intent.hasOwnProperty('semantic') ){ //瞎输的英文字符
+						   let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+									 }
+							that.pushData(tempObj1)
+
+					}
+					if(intent.service == 'mapU'){
+						console.log('111')
+						this.map.latitude = intent.data.result[0].latitude
+						this.map.longitude = intent.data.result[0].longitude
+						this.map.address =  intent.data.result[0].address
+						let map = JSON.stringify(this.map)
+				       formatNavigateTo(
+					    "/pages/map/main?map=" + map
+				        )
+					return
+					}
+				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
 						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags'))) {
                             if (intent.answer.text && intent.type != 'NULL') {
-								 if(intent.semantic.slots.hasOwnProperty('presenter')){
-									console.log('节目')
+								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
+									
 									return
 								}
-								
+								//歌曲音乐
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
                                     textDesc: intent.answer.text,
@@ -535,44 +476,47 @@
                                     audioPic: intent.data.result[0].picMin, //专辑图片
                                     audioName: intent.data.result[0].songName, //歌名
 								}
-                                that.pushData(audioObj)
+								that.pushData(audioObj)
+								return
                             }  else if(intent.rc == 0 && intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
+								
                                 let tempObj = {
                                     type: 3,
                                     textDesc: intent.answer.text 
                                 }
                                 that.pushData(tempObj)
                             }
-						} else if(intent.rc == 0 && !(intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
-						|| intent.semantic.slots.hasOwnProperty('genre'))){
-							 if(!intent.hasOwnProperty('data') ){
-							console.log('111')
-							let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.question.text ? intent.answer.question.text : intent.answer.text ,
-									 }
-								that.pushData(tempObj1)
-						} else{  
+						} else if( !intent.hasOwnProperty('data')){
+
+							{  
 			 						let tempObj1 = {
 										type: 3,
 										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
 									 }
 									    that.pushData(tempObj1)
-						      }
-						} else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
+						    }
+						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
+							 
 			 						let tempObj1 = {
 										type: 3,
 										textDesc: intent.answer.text,
 									 }
 								that.pushData(tempObj1)
-						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {			
+						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {	
+								
 							let tempObj1 = {
 										type: 3,
 										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢' ,
 									 }
 								that.pushData(tempObj1)
+						} else{
+							let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+									 }
+								that.pushData(tempObj1)
 						}
-                } 
+				} 
             })
         }
     })
@@ -1343,7 +1287,7 @@
 
 	.home-content{
 		position: relative;
-		top:50rpx;
+		//top:50rpx;
 		 height: 75vh;
 		
 	}
@@ -1359,7 +1303,8 @@
 		position: relative;
 		width: 100%;
 		height: 10vh;
-		background-color: #FFFFFF;
+		//background-color: #FFFFFF;
+		background-color: #F8FAFF;
 	}
 	/*飞鱼形象*/
 	

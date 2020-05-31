@@ -1,6 +1,6 @@
 let md5 = require('md5-node');
 export function answerTextz( data) {
-const URL = 'http://openapi.xfyun.cn/v2/aiui'
+const URL = 'https://openapi.xfyun.cn/v2/aiui'
 const APPID = '5ec777cd'
 const API_KEY = '9b2092171fa9c2bac40025784016bef0'
 const AUTH_ID = '4445f41e175bf2f3c699edf706884767'
