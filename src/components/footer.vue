@@ -136,11 +136,11 @@ import { answerTextz } from "@/utils/wxRequest";
 
 			},
 			voiceInputStart(event) {
-				this.$emit('voiceInputStart');
-				voiceing.status = "start";
-				recorderManager.start(options);
-				voiceing.clientY = event.clientY;
-				voiceing.timeStamp = new Date().getTime();
+				voiceing.status = "start"
+				this.$emit("recordStart")
+				recorderManager.start(options)
+				voiceing.clientY = event.clientY
+				voiceing.timeStamp = new Date().getTime()
 			},
 			voiceInputEnd() {
 				this.$emit("recordEnd")
