@@ -5,8 +5,8 @@
     </div>
 </template>
 <script>
-import { formatNavigateTo } from "@/utils/index"
-import { answerTextz } from "@/utils/wxRequest.js"
+import { formatNavigateTo,hex_sha1,sha1} from "@/utils/index"
+import { Text } from "@/utils/wxRequest.js"
 import { request } from "@/utils/wxRequest.js"
 export default {
     methods: {
@@ -19,16 +19,28 @@ export default {
         }
     },
     created() { 
-     //console.log('before') 
-    //request('/api','get').then(res=>{console.log(res)}).catch(err=>{console.log(err)})
-    //request('http://localhost:8009','get').then(res=>{console.log(res)})
-     //request('api','get').then(res=>{console.log(res)})
-       answerTextz('我想去之心城').then((res) => {
-            let a = JSON.parse(res.data.data[1].content)
-             //let a = res.data.data
-            console.log(a)
-            //console.log(a.intent.moreResults[1].data.result)          
-        })
+    //     let album = '9742774'
+    //     let openId = 'aiuicus'
+    //     let openKey = '4c19ac6f5e4b11e88762d00d525b3d86'
+    //     var value='aiuicusclientType0pageSize14c19ac6f5e4b11e88762d00d525b3d86'
+    //    var sha1_result=sha1(value);
+    //      console.log(sha1_result)
+    //      wx.request({
+    //          url: 'https://autopre.openspeech.cn/api/v2.0/programe/album/'+album+'/track',
+    //          method: 'get',
+    //          data :{
+    //              //hostId: '1000202',
+    //              pageSize:'1',
+    //              clientType:'0', 
+    //              openId:'aiuicus',
+    //              sign: sha1_result,
+                
+    //          },
+    //          success: function(res) {
+	// 			console.log(res)
+	// 		},
+			 
+    //      })
 
     }
 }
@@ -39,7 +51,7 @@ export default {
 <style lang="less" scoped>
 .head{
     width: 100%;
-    height: 7vh;
+    height: 8vh;
     position: relative;
     display: flex;
     justify-content: left;

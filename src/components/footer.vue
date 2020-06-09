@@ -10,7 +10,7 @@
 		<div class="footer-textarea flexRowAlign" v-if="!footShow">
 			<image src="/static/img/voiceIcon.png" @click="toTxt"></image>
 			<input v-model="textcontent" @confirm="sendTextInput($event,'textInput')" @blur="hideTxt" type="text"  cursor-spacing="15" confirm-type="send" placeholder="输入你想知道的问题" placeholder-style="color:#A6A6A6;font-size:28rpx;">
-			<button @click="send">发送 </button>
+			<button @click="send">发送</button>
 			
 		</div>
 
@@ -19,12 +19,13 @@
 
 <script>
 import { answerTextz } from "@/utils/wxRequest";
+import { Voice } from "@/utils/wxRequest";
 	let voiceing = {
 		timeStamp: 0,
 		clientY: 0,
 		status: 'success'
 	};
-	const recorderManager = wx.getRecorderManager();
+	const recorderManager = wx.getRecorderManager()
 	const options = {
 		duration: 30000,
 		numberOfChannels: 1,
@@ -32,10 +33,9 @@ import { answerTextz } from "@/utils/wxRequest";
 		format: 'wav',
 		frameSize: 50
 	};
-	import { answerVoice } from "@/utils/wx-request";
 	export default {
 		onUnload() {
-			recorderManager.stop();
+			recorderManager.stop()
 		},
 		data() {
 			return {
@@ -46,7 +46,18 @@ import { answerTextz } from "@/utils/wxRequest";
 
 		mounted() {
 			/*录音系统回调*/
-			recorderManager.onStart(() => {
+			// recorderManager.onStart(() => {
+			// 	let that = this;
+			// 	if(voiceing.status == "end") {
+			// 		recorderManager.stop()
+			// 	} else {
+			// 		that.$emit("recordStart")
+			// 		voiceing.status = "success"
+			// 		wx.vibrateShort()
+					
+			// 	}
+			// });
+				recorderManager.onStart(() => {
 				let that = this;
 				if(voiceing.status == "end") {
 					recorderManager.stop();
@@ -59,48 +70,46 @@ import { answerTextz } from "@/utils/wxRequest";
 			recorderManager.onStop((res) => {
 
 				let that = this
-				that.$emit("recordEnd")
+				let tempSendArr = []
+				let text = ''
+				let answer ={}
+				let resData ={}
+				this.$emit("recordEnd")
 				if(voiceing.status == 'cancel')
 				return
 
-				answerTextz(res.tempFilePath).then(res=>{
-					console.log(res)
-					})
-				//需要上传音频给后台，等待后台返回数据，返回的text将this.isSwitchToVoice = false;并将text显示到首页	
-				// answerVoice(
-				// 	'/aimind/indexMain/aiui/file', res.tempFilePath
-				// ).then(res => {
-				// 	//语音后获取答案
-				// 	let voiceJsonData = JSON.parse(res.data);
-				// 	let voiceData = voiceJsonData;
-				// 	console.log(voiceData)
-				// 	let tempSendArr = [];
-				// 	let resData = {};
-				// 	let text;
-				// 	let answer;
-				// 	voiceData.forEach(item => {
-				// 		if(item.result_id == "0" || item.result_id == '1') {
-				// 			tempSendArr.push(item);
-				// 		}
-				// 	})
-				// 	tempSendArr.forEach(item => {
-				// 		if(item.sub == 'iat'){
-				// 			text = item.text ? item.text : '';
-				// 		}
-				// 		if(item.sub == 'tpp'){
-				// 			answer = JSON.parse(item.content);
-				// 		}
-				// 		resData.text = text;
-				// 		resData.answer = answer;
-				// 	})
-				// 	that.$emit('sendConent', resData)
-				// })
+				 Voice(res.tempFilePath).then(res=>{
+					 let voice ={
+						 text:''
+					 }
+					let data = JSON.parse(res)
+					let voiceData = data.data.data
+					 	voiceData.forEach(item => {
+				 		if(item.result_id == "0" || item.result_id == '1') {
+				 			tempSendArr.push(item);
+				 		}
+					 })
+					 console.log(tempSendArr)
+				 	tempSendArr.forEach(item => {
+				 		if(item.sub == 'iat'){
+							that.text = item.text 
+				 		}
+						if(item.sub == 'tpp'){
+				 			that.answer = JSON.parse(item.content);
+				 		}
+						 resData.text = that.text
+						 resData.content = that.answer
+					 })
+				 	that.$emit('sendConent', resData)
+				})
+
 			});
 		},
 		methods:{ 
 			//控制显示图标
 			showIcon() {
 				this.footShow = false;
+				console.log(this)
 			},
 			toTxt() {
 				let that = this
@@ -121,8 +130,9 @@ import { answerTextz } from "@/utils/wxRequest";
 				this.textcontent = ''
 				this.footShow = false
 			},
-
+            /** 同sendTextInput方法 */
 			send() {
+				
 				if(this.textcontent == '')
 				return 
 				let that = this
@@ -133,11 +143,10 @@ import { answerTextz } from "@/utils/wxRequest";
 				that.$emit("sendTextInput", txtData)
 				that.textcontent = ''
 				
-
 			},
 			voiceInputStart(event) {
-				voiceing.status = "start"
 				this.$emit("recordStart")
+				voiceing.status = "start"
 				recorderManager.start(options)
 				voiceing.clientY = event.clientY
 				voiceing.timeStamp = new Date().getTime()
@@ -145,7 +154,7 @@ import { answerTextz } from "@/utils/wxRequest";
 			voiceInputEnd() {
 				this.$emit("recordEnd")
 				if((new Date().getTime()) - voiceing.timeStamp < 400) {
-					voiceing.status = "end";
+					voiceing.status = "end"
 					recorderManager.stop();
 					wx.showToast({
 						title: '说话时间太短',
@@ -167,13 +176,12 @@ import { answerTextz } from "@/utils/wxRequest";
 			voiceInputMove(event) {
 				if(voiceing.clientY - event.clientY > 50) {
 					voiceing.status = 'cancel';
-					 //wx.stopRecord()
 					 recorderManager.stop()
 					 let  that = this
 					that.$emit("recordEnd")
-					return 
+				
 				}
-			},
+			}
 			
 		}
 	}
@@ -196,7 +204,7 @@ import { answerTextz } from "@/utils/wxRequest";
 		margin-top: 8rpx;
 		margin-left: 2vw;
 		margin-right: 20rpx;
-		width: 85%;
+		width: 60vw;
 		height: 50%;
 		background-color:rgba(3, 17, 17, 0.164);
 		
@@ -207,17 +215,17 @@ import { answerTextz } from "@/utils/wxRequest";
 		margin-top: 8rpx;
 		margin-left: 2vw;
 		margin-right: 20rpx;
-		width: 100rpx;
+		width: 10vw;
 		height: 71rpx;
 	}
 	.footer-textarea button {
 		margin-top: 8rpx;
 		margin-left: 2vw;
-		width: 160rpx;
+		width: 17vw;
 		height: 70rpx;
 		background-color: rgb(0, 119, 255);
 	    text-align: center;
-		font-size: 20rpx;
+		font-size: 25rpx;
 		line-height: 70rpx;
 		
 		
@@ -226,7 +234,7 @@ import { answerTextz } from "@/utils/wxRequest";
 	.voice  {
 		margin-top: 8rpx;
 		margin-left: 8vw;
-		width: 430rpx;
+		width: 50vw;
 		height: 70rpx;
 		font-size: 30rpx;
 		text-align: center;
@@ -238,8 +246,8 @@ import { answerTextz } from "@/utils/wxRequest";
 	.footer-voice image {
 		margin-top: 8rpx;
 		margin-left: 5vw;
-		width: 75rpx;
-		height: 75rpx;
+		width: 70rpx;
+		height: 70rpx;
 	}
 	
 </style>

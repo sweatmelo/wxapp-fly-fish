@@ -105,7 +105,6 @@
 	}
 	
 	@keyframes transOpact1 {
-		
 		0% {
 			opacity: 1;
 		}

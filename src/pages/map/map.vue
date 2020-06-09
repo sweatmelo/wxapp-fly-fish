@@ -42,9 +42,7 @@ export default {
     'latitude': parseFloat(map.latitude),
     'longitude': parseFloat(map.longitude)
   });
-  //let Key = 6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD&location=39.89631551, 116.323459711
-  //let SIG = md5("plugin://routePlan/index?key=6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD&location=39.89631551, 116.323459711SWvT26ypwq5Nwb5RvS8cLi6NSoH8HlJX")
-  //PXbfnyRLd6dimBHkcL3Mz3NfmtTvoKj
+  
     wx.navigateTo({
         url: 'plugin://routePlan/index?key=' + this.key+ '&referer=' + referer + '&endPoint=' + endPoint +'&navigation=1'
       

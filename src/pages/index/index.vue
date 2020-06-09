@@ -8,7 +8,7 @@
 				<head-detail></head-detail>				
 			</div>
 			<div class="home-content">
-			<scroll-view scroll-y="true" :style="{'height':isIphoneX ? 'calc(100vh - 340rpx)':'calc(100vh - 350rpx)'}" class="scrollWidth" :scroll-into-view="toView" @scrolltolower="toView = ''">
+			<scroll-view scroll-y="true" :style="{'height':isIphoneX ? 'calc(100vh - 270rpx)':'calc(100vh - 235rpx)'}" class="scrollWidth" :scroll-into-view="toView" @scrolltolower="toView = ''">
 
 					<div class="chat-box" v-for="(chat,ind) in chatBoxData" :key="ind">
 						<!--文字输入问题显示-->
@@ -276,7 +276,7 @@
 			</div>
 		</div>
 		<div class="fotterBox">
-		<foot-component @sendConent="sendConent" @sendTextInput="sendTextInput"  @recordStart="recordStart" @recordEnd="recordEnd" ></foot-component>
+		<foot-component @sendConent= "sendConent" @sendTextInput= "sendTextInput"  @recordStart= "recordStart" @recordEnd= "recordEnd" ></foot-component>
 		</div>
 		<!-- <div style="height: 60rpx;background-color: #F8FAFF;width: 100vw" v-if="isIphoneX"></div> -->
 		<!--文字和图片答案的详情-->
@@ -294,11 +294,10 @@
     import videoDetail from "@/components/video"
 	import satisfaction from "@/components/satisfaction"
 	import { answerText } from "@/utils/wx-request";
-	import {answerTextz} from "@/utils/wxRequest"
+	import {answerTextz,program} from "@/utils/wxRequest"
 	import { formatNavigateTo } from "@/utils/index";
 	import headDetail from "@/components/head"
-	//const innerAudioContext = wx.createInnerAudioContext();
-	//innerAudioContext.obeyMuteSwitch = false;
+	
 	let currentAudioSrc = {};
 	let audioContextSrc = {};
 	let homeListData = [];
@@ -309,7 +308,7 @@
 		onLoad() {
 			this.chatBoxData = [
 				{type: 3,
-				textDesc: '你好，很高兴见到你。你可以使用文本或者语音跟我对话，更多功能请在左上角的设置里探索吧~'
+				textDesc: '你好，很高兴见到你。你可以使用文本或者语音跟我对话~'
 			}]
 		},
 		onUnload() {
@@ -322,7 +321,7 @@
 				isIphoneX: false,
 				toView: 'bottom0',
 				isVoicing: false, //控制正在说话的动画
-				agreeShow: true,
+				//agreeShow: true,
 				videoShow: false, //控制视频可以
 				textData: {
 					visible: false, //控制显示文字答案弹窗
@@ -331,15 +330,15 @@
 					refText: true
 				},
 				chatBoxData: [],
-				studyListRequests: [],
-				askData: [],
+				//studyListRequests: [],
+				//askData: [],
 				pageNum: 1,
 				pageSize: 3,
 				total: '',
 				videoCompentSrc: '', //传给子组件的视频地址
 				bottomRequests: [],
-				slectOneList: [],
-				modelData: [],
+				//slectOneList: [],
+				//modelData: [],
 				map: {},
 			}
 		},
@@ -361,6 +360,28 @@
 			headDetail,
 		},
 		methods: {
+			recordStart() {
+			
+			this.isVoicing = true;
+			},
+			recordEnd() {
+				this.isVoicing = false;
+				
+			},
+			programer(res){
+				console.log('rwet')
+				let a =res.data.data
+				
+	        let audioObj = {
+			type: 2,
+			//audioSinger: intent.data.result[0].singerName, //歌手
+			audioSrc: a.trackList[0].playUrl, //播放地址
+			audioPic: a.logoUrl, //专辑图片
+			audioName: a.albumName, //歌名
+								}
+								console.log(audioObj)
+			this.pushData(audioObj)
+			},
 			/* 数据放入数组内，可用 */
 			pushData(opt) {
 				let that = this;
@@ -443,10 +464,10 @@
 										textDesc: intent.answer.text,
 									 }
 							that.pushData(tempObj1)
-
+							return
 					}
 					if(intent.service == 'mapU'){
-						console.log('111')
+						//console.log('111')
 						this.map.latitude = intent.data.result[0].latitude
 						this.map.longitude = intent.data.result[0].longitude
 						this.map.address =  intent.data.result[0].address
@@ -454,16 +475,35 @@
 				       formatNavigateTo(
 					    "/pages/map/main?map=" + map
 				        )
-					return
+					     return
+					}
+					if(intent.semantic.slots.hasOwnProperty('insType')){  //播放操作
+					    let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text + '请您手动操作哦~',
+                                }
+                                that.pushData(tempObj)
+					}
+					if(!intent.hasOwnProperty('data')){
+						let tempObj = { 
+                                    type: 3,
+                                    textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+                                }
+                                that.pushData(tempObj)
 					}
 				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
-						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags'))) {
-                            if (intent.answer.text && intent.type != 'NULL') {
-								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
-									
-									return
+						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
+							console.log('qwe')
+                            if (intent.answer.text && intent.type != 'NULL' ){
+								 if(intent.semantic.slots.hasOwnProperty('presenter')){ 
+									 let album = intent.data.result[0].albumId //节目相声
+									 console.log(album)
+									 program(album).then(res =>{
+										this.programer(res)
+									 })
+									 return
 								}
-								//歌曲音乐
+								//音乐
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
                                     textDesc: intent.answer.text,
@@ -478,23 +518,14 @@
 								}
 								that.pushData(audioObj)
 								return
-                            }  else if(intent.rc == 0 && intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
-								
+                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {
                                     type: 3,
-                                    textDesc: intent.answer.text 
+                                    textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
                                 }
-                                that.pushData(tempObj)
+								that.pushData(tempObj)
+								return
                             }
-						} else if( !intent.hasOwnProperty('data')){
-
-							{  
-			 						let tempObj1 = {
-										type: 3,
-										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
-									 }
-									    that.pushData(tempObj1)
-						    }
 						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
 							 
 			 						let tempObj1 = {
@@ -522,274 +553,6 @@
     })
 },
 
-			// txtAnswer(resData) {
-			// 	let that = this;
-			// 	let noText;
-			// 	answerText(
-			// 		'/aimind/indexMain/aiui/text', {
-			// 			text: resData
-			// 		}
-			// 	).then(res => {
-			// 		if(res.data.code == '0') {
-			// 			let answerData = res.data.data;
-			// 			answerData.forEach(e => {
-			// 				if(e.sub == "tpp") {
-			// 					let content = JSON.parse(e.content);
-			// 					console.log(content);
-			// 					if(content.intent.rc == 0) {
-			// 						let restult = content.intent.data.result;
-			// 						let presentType = content.intent.data.present_type;
-			// 						if(restult.length == 1) {
-			// 							//只有一个答案的情况下
-			// 							let paramFlag = restult[0].hasOwnProperty('param');
-			// 							if(restult[0].sentences == "" && restult[0].image.length == 0 && restult[0].video.length == 0 && !paramFlag) {
-			// 								//查看data数据中是否有结果，没结果查看answer
-			// 								if(content.intent.answer.text) {
-			// 									let tempObj = {
-			// 										type: 3,
-			// 										isDisAgree: 0,
-			// 										isAgree: 0,
-			// 										textDesc: content.intent.answer.text,
-			// 										sid: content.intent.sid
-			// 									}
-			// 									if((tempObj.textDesc).length > 60) {
-			// 										tempObj.isDetails = true; //显示详情
-			// 									} else {
-			// 										tempObj.isDetails = false;
-			// 									}
-			// 									that.pushData(tempObj);
-			// 								} else {
-			// 									let tempObj = {
-			// 										type: 0,
-			// 										isDisAgree: 0,
-			// 										isAgree: 0,
-			// 										text: '抱歉，没有找到对应的结果呢！我会继续努力学习的呢',
-			// 										sid: content.intent.sid
-			// 									}
-			// 									that.pushData(tempObj);
-			// 								}
-			// 							} else if(presentType == '文字展示') {
-			// 								let text = restult[0].sentences;
-			// 								let tempObj = {
-			// 									type: 3,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									textDesc: text,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								if((tempObj.textDesc).length > 90) {
-			// 									tempObj.isDetails = true; //显示详情
-			// 								} else {
-			// 									tempObj.isDetails = false;
-			// 								}
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '图文搭配') {
-			// 								let txtData = restult[0].sentences.replace('<br>', '');
-			// 								let tempObj = {
-			// 									type: 4,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									flag: 1, // 表示只有一个答案
-			// 									imgSrc: restult[0].image,
-			// 									data: [],
-			// 									textDesc: restult[0].sentences,
-			// 									txt: txtData,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								tempObj.isDetails = true; //显示详情
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '视频展示') {
-			// 								let tempObj = {
-			// 									type: 5,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									videoImgSrc: restult[0].image[0],
-			// 									videoSrc: restult[0].video,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '车型参数') {
-			// 								let keyTemp = [];
-			// 								let val = '';
-			// 								let typeFlag;
-			// 								let dataTemp = [];
-			// 								let moreFlag = false;
-			// 								for(let key in restult[0].param) {
-			// 									let temValObj = {};
-			// 									temValObj.val = restult[0].param[key];
-			// 									temValObj.keyVal = key;
-			// 									if(temValObj.val.length > 9) {
-			// 										moreFlag = true;
-			// 										temValObj.val = temValObj.val.substring(0, 8) + '...'
-			// 									}
-			// 									keyTemp.push(temValObj);
-			// 								}
-			// 								if(keyTemp.length > 8) {
-			// 									moreFlag = true;
-			// 									dataTemp = keyTemp.slice(0, 8);
-			// 								} else {
-			// 									dataTemp = keyTemp;
-			// 								}
-			// 								let tempObj = {
-			// 									type: 11,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									paramData: dataTemp,
-			// 									isMore: moreFlag,
-			// 									arr: restult[0].param,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '配置亮点') {
-			// 								let keyTemp = [];
-			// 								let val = '';
-			// 								let typeFlag;
-			// 								let dataTemp = [];
-			// 								let moreFlag = false;
-			// 								for(let key in restult[0].param) {
-			// 									let temValObj = {};
-			// 									temValObj.val = restult[0].param[key];
-			// 									temValObj.keyVal = key;
-			// 									keyTemp.push(temValObj.keyVal);
-			// 								}
-			// 								if(keyTemp.length > 15) {
-			// 									moreFlag = true;
-			// 									dataTemp = keyTemp.slice(0, 15);
-			// 								} else {
-			// 									dataTemp = keyTemp;
-			// 								}
-			// 								let tempObj = {
-			// 									type: 12,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									paramData: dataTemp,
-			// 									isMore: moreFlag,
-			// 									arr: restult[0].param,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								that.pushData(tempObj);
-			// 							} else {
-			// 								//口碑查看
-			// 								let keyTemp = [];
-			// 								let val = '';
-			// 								let typeFlag;
-			// 								let moreFlag = false;
-			// 								let dataTemp = [];
-			// 								for(let key in restult[0].param) {
-			// 									let temValObj = {};
-			// 									temValObj.val = restult[0].param[key];
-			// 									temValObj.keyVal = key;
-			// 									keyTemp.push(temValObj.keyVal);
-			// 								}
-			// 								if(keyTemp.length > 15) {
-			// 									moreFlag = true;
-			// 									dataTemp = keyTemp.slice(0, 15);
-			// 								} else {
-			// 									dataTemp = keyTemp;
-			// 								}
-			// 								let tempObj = {
-			// 									type: 13,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									paramData: dataTemp,
-			// 									isMore: moreFlag,
-			// 									arr: restult[0].param,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								that.pushData(tempObj);
-			// 							}
-			// 						} else {
-			// 							let moreData = restult;
-			// 							let tempImgArr = [];
-			// 							let tempTxt = [];
-			// 							moreData.forEach(item => {
-			// 								if(item.sentences.length != 0) {
-			// 									tempTxt.push(item.sentences)
-			// 								}
-			// 								if(item.image.length != 0) {
-			// 									tempImgArr.push(item)
-			// 								}
-			// 							})
-			// 							//多答案的情况
-			// 							if(presentType == '文字展示') {
-			// 								let text = tempTxt[0];
-			// 								let tempObj = {
-			// 									type: 3,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									flag: 2, // 表示只有多个答案
-			// 									data: moreData, //多答案的结果
-			// 									textDesc: text,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								if((tempObj.textDesc).length > 80) {
-			// 									tempObj.isDetails = true; //显示详情
-			// 								} else {
-			// 									tempObj.isDetails = false;
-			// 								}
-			// 								//空调使用的答案是多答案，需要判断图片
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '图文搭配') {
-			// 								let txtTemp = tempImgArr[0].sentences.replace(/<(?!img).*?>/g, "");
-			// 								let txtData = txtTemp.replace(/<(?!br).*?>/g, "");
-			// 								let tempObj = {
-			// 									type: 4,
-			// 									isDisAgree: 0,
-			// 									isAgree: 0,
-			// 									flag: 2, // 表示只有多个答案
-			// 									imgSrc: tempImgArr[0].image,
-			// 									textDesc: tempImgArr[0].sentences,
-			// 									data: moreData, //多答案的结果
-			// 									txt: txtData,
-			// 									sid: content.intent.sid
-			// 								}
-			// 								tempObj.isDetails = true; //显示详情
-			// 								//空调使用的答案是多答案，需要判断图片
-			// 								that.pushData(tempObj);
-			// 							} else if(presentType == '视频展示') {
-			// 								console.log('多视频展示')
-			// 							} else if(presentType == '车型参数') {
-			// 								console.log('多车型参数')
-			// 							} else if(presentType == '配置亮点') {
-			// 								console.log('多配置亮点')
-			// 							} else {
-			// 								//口碑查看
-			// 								console.log('口碑查看')
-			// 							}
-			// 						}
-			// 					} else if(content.intent.rc == 4) {
-			// 						//									console.log(resData)
-			// 						let noText;
-			// 						if(resData == '抱歉，我还没有听清你的问题呢') {
-			// 							noText = '抱歉，我还没有听清你的问题呢';
-			// 						} else {
-			// 							noText = "抱歉，没有找到你想要的答案，我会继续学习新技能的";
-			// 						}
-			// 						let tempObj = {
-			// 							type: 0,
-			// 							isDisAgree: 0,
-			// 							isAgree: 0,
-			// 							isDetails: 0,
-			// 							text: noText,
-			// 							sid: content.intent.sid
-			// 						}
-			// 						that.pushData(tempObj);
-			// 					} else {
-			// 						let tempObj = {
-			// 							type: 0,
-			// 							isDisAgree: 0,
-			// 							isAgree: 0,
-			// 							isDetails: 0,
-			// 							text: '抱歉，没有找到你想要的答案，我会继续学习新技能的',
-			// 							sid: content.intent.sid
-			// 						}
-			// 						that.pushData(tempObj);
-			// 					}
-			// 				}
-			// 			})
-			// 		}
-			// 	})
-			// },
 			voiceAnswer(content) {
 				let that = this;
 				if(content.intent.rc == 0) {
@@ -1043,58 +806,59 @@
 			//回答问题的接口
 			answerOperate(resData, type) {
 				let that = this;
-				if(type == 6) {
-					//品牌介绍获取以及引导答案
-					homeListOne = [];
-					homeListQuestion = [];
-					homeListData.forEach(item => {
-						if(item.categoryName == resData) {
-							let oneData = item.examples;
-							let objTemp = {
-								listOne: []
-							};
-							oneData.forEach(itemData => {
-								objTemp.type = 6; //表示品牌介绍的一级引导
-								objTemp.listOne.push(itemData.example);
-								homeListOne.push(itemData);
-							})
-							homeListQuestion = item.question;
-							that.chatBoxData.push(objTemp);
-						}
-					})
-				} else if(type == 7) {
-					//品牌介绍获取二级引导答案
-					homeListOne.forEach(item => {
-						if(item.example == resData) {
-							if(item.select.length != 0) {
-								let objTemp = {
-									select: []
-								};
-								objTemp.type = 7;
-								objTemp.select = item.select;
-								that.chatBoxData.push(objTemp);
-							} else {}
-						}
-					})
-				} else if(type == 8) {
-					//品牌介绍获取三级引导答案
-					homeListTwo = resData;
-					if(homeListQuestion.length != 0) {
-						let objTemp = {
-							homeListQuestion: []
-						};
-						objTemp.type = 8;
-						objTemp.homeListQuestion = homeListQuestion;
-						that.chatBoxData.push(objTemp);
-					} else {
-						let txtData = "什么是" + resData;
-						that.txtAnswer(txtData);
-					}
-				} else if(type == 1) {
-					//品牌介绍获取答案
-					let txtData = homeListTwo + resData;
-					that.txtAnswer(txtData);
-				} else if(type == 'voice') {
+				// if(type == 6) {
+				// 	//品牌介绍获取以及引导答案
+				// 	homeListOne = [];
+				// 	homeListQuestion = [];
+				// 	homeListData.forEach(item => {
+				// 		if(item.categoryName == resData) {
+				// 			let oneData = item.examples;
+				// 			let objTemp = {
+				// 				listOne: []
+				// 			};
+				// 			oneData.forEach(itemData => {
+				// 				objTemp.type = 6; //表示品牌介绍的一级引导
+				// 				objTemp.listOne.push(itemData.example);
+				// 				homeListOne.push(itemData);
+				// 			})
+				// 			homeListQuestion = item.question;
+				// 			that.chatBoxData.push(objTemp);
+				// 		}
+				// 	})
+				// } else if(type == 7) {
+				// 	//品牌介绍获取二级引导答案
+				// 	homeListOne.forEach(item => {
+				// 		if(item.example == resData) {
+				// 			if(item.select.length != 0) {
+				// 				let objTemp = {
+				// 					select: []
+				// 				};
+				// 				objTemp.type = 7;
+				// 				objTemp.select = item.select;
+				// 				that.chatBoxData.push(objTemp);
+				// 			} else {}
+				// 		}
+				// 	})
+				// } else if(type == 8) {
+				// 	//品牌介绍获取三级引导答案
+				// 	homeListTwo = resData;
+				// 	if(homeListQuestion.length != 0) {
+				// 		let objTemp = {
+				// 			homeListQuestion: []
+				// 		};
+				// 		objTemp.type = 8;
+				// 		objTemp.homeListQuestion = homeListQuestion;
+				// 		that.chatBoxData.push(objTemp);
+				// 	} else {
+				// 		let txtData = "什么是" + resData;
+				// 		that.txtAnswer(txtData);
+				// 	}
+				// } else if(type == 1) {
+				// 	//品牌介绍获取答案
+				// 	let txtData = homeListTwo + resData;
+				// 	that.txtAnswer(txtData);
+				// } else
+				 if(type == 'voice') {
 					that.voiceAnswer(resData);
 				} else {
 					//文本输入框获取答案
@@ -1124,11 +888,7 @@
 			sendTextInput(val, type) {
 				//				console.log(val)
 				if(type == 0) {
-					this.enter(1, val);
-					let tempObj = {};
-					tempObj.text = "我是飞鱼同学，你的人工智能虚拟助理，我可以帮你解答各类用车问题，也可以帮你普及品牌、车型、保养等百科知识，新技能还在不断学习中，欢迎常找我玩~";
-					tempObj.type = 0;
-					this.pushData(tempObj)
+					
 				} else if(val.type == 'textInput') {
 					if(val.text) {
 						//这里的1代表问题 chatbox左侧输入内容
@@ -1174,33 +934,124 @@
 				}
 			},
 			//语音发送
-			// sendConent(val) {
-			// 	answerTextz(val).then(res=>{
-			// 		console.log(res.data)
-			// 	})
-			// 					console.log(val)
-			// 	if(val.text == '' && val.answer.rc == 1) {
-			// 		let tempObj = {};
-			// 		tempObj.text = "抱歉，我还没有听清你的问题呢";
-			// 		tempObj.type = 0;
-			// 		this.pushData(tempObj);
-			// 		this.enter(3, tempObj.text);
-			// 	} else if(val.text != '' && val.answer.intent.rc == 4) {
-			// 		this.enter(1, val.text);
-			// 		val.answer.intent.text = "抱歉，没有找到你想要的答案，我会继续学习新技能的";
-			// 		this.answerOperate(val.answer, 'voice');
-			// 	} else if(val.text != '' && val.answer.intent.rc == 0) {
-			// 		this.enter(1, val.text);
-			// 		this.answerOperate(val.answer, 'voice');
-			// 	}
-			// },
-			recordStart() {
-				this.isVoicing = true;
+			sendConent(val) {		
+				console.log(val)
+				let that =this
+				if(val.text == '' && val.content.rc == 1) {
+					let tempObj = {}
+					tempObj.textDesc = "抱歉，我还没有听清你的问题呢"
+					tempObj.type = 3
+					//this.enter(1,'您好像没有说话呢~')
+					this.pushData(tempObj)
+					return
+				 } 
+				 that.enter(1, val.text) 
+				 let intent = val.content.intent
+				 //console.log(val.content.intent)
+				 if(intent.rc == 0 && !intent.hasOwnProperty('semantic') ){ //瞎输的英文字符
+						   let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+									 }
+							that.pushData(tempObj1)
+							return
+					}
+					if(intent.service == 'mapU'){
+						console.log('111')
+						this.map.latitude = intent.data.result[0].latitude
+						this.map.longitude = intent.data.result[0].longitude
+						this.map.address =  intent.data.result[0].address
+						let map = JSON.stringify(this.map)
+						//console.log(map)
+				       formatNavigateTo(
+					    "/pages/map/main?map=" + map
+				        )
+					     return
+					}
+					if(intent.semantic.slots.hasOwnProperty('insType')){  //播放操作
+					    let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text + '请您手动操作哦~',
+                                }
+                                that.pushData(tempObj)
+					}
+					if(!intent.hasOwnProperty('data')){
+						let tempObj = { 
+                                    type: 3,
+                                    textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+                                }
+                                that.pushData(tempObj)
+					}
+				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
+							console.log('qwe')
+                            if (intent.answer.text && intent.type != 'NULL' ){
+								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
+									 let album = intent.data.result[0].albumId //节目相声
+									 console.log(album)
+									 program(album).then(res =>{
+										this.programer(res)
+									 })
+							
+									return
+								}
+								//音乐
+                                let tempObj = { //歌曲播放提示
+                                    type: 3,
+                                    textDesc: intent.answer.text,
+								}
+								console.log(tempObj)
+                                that.pushData(tempObj)
+                                let audioObj = {
+                                    type: 2,
+                                    audioSinger: intent.data.result[0].singerName, //歌手
+                                    audioSrc: intent.data.result[0].playUrl, //播放地址
+                                    audioPic: intent.data.result[0].picMin, //专辑图片
+                                    audioName: intent.data.result[0].songName, //歌名
+								}
+								that.pushData(audioObj)
+								return
+                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
+                                let tempObj = {
+                                    type: 3,
+                                    textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+                                }
+								that.pushData(tempObj)
+								return
+                            }
+						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
+							 
+			 						let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+									 }
+								that.pushData(tempObj1)
+						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {	
+								
+							let tempObj1 = {
+										type: 3,
+										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢' ,
+									 }
+								that.pushData(tempObj1)
+						} else{
+							let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+									 }
+								that.pushData(tempObj1)
+						}
+				} 
+				//else if(val.text != '' && val.content.intent.rc == 4) {
+				// 	this.enter(1, val.text);
+				// 	val.answer.intent.text = "抱歉，没有找到你想要的答案，我会继续学习新技能的";
+				// 	this.answerOperate(val.content, 'voice');
+				// } else if(val.text != '' && val.content.intent.rc == 0) {
+				// 	this.enter(1, val.text);
+				// 	this.answerOperate(val.content, 'voice');
+				// }
 			},
-			recordEnd() {
-				this.isVoicing = false;
-				
-			},
+			
+		
 			toSkillPage() {
 				//跳转到技能中心页面
 				let studyListRequests = JSON.stringify(this.studyListRequests);
@@ -1268,7 +1119,7 @@
 			// },
 		
 		}
-	}
+	
 </script>
 
 <style lang="less" scoped>
@@ -1287,8 +1138,7 @@
 
 	.home-content{
 		position: relative;
-		//top:50rpx;
-		 height: 75vh;
+		 height: 82vh;
 		
 	}
 
@@ -1308,7 +1158,9 @@
 	}
 	/*飞鱼形象*/
 	
-	
+	.scrollWidth{
+		margin-top: 6rpx;
+	}
 	
 	.headImg {
 		width: 234rpx;
@@ -1349,32 +1201,44 @@
 		margin-right: 10rpx;
 		max-width: 580rpx;
 		box-sizing: border-box;
-		border-radius: 24px 6px 24px 24px;
+		border-radius: 15px 6px 15px 15px;
 		line-height: 34rpx;
 		font-size: 28rpx;
 		color: #FFFFFF;
-		background: #4BA4F3;
-		box-shadow: 0 4rpx 16rpx 0 rgba(20, 100, 255, 0.24);
+		//background-color: #4BA4F3;
+		background-color: rgb(69, 72, 77);
+		box-shadow: 0 4rpx 16rpx 0 rgba(149, 150, 156, 0.24);
 	}
 	
 	.dialogBox,
 	.imgBox,
 	.pinpaiOneBox,
 	.videoBox {
-		border-radius: 0 38rpx 38rpx 38rpx;
+		border-radius: 0 15rpx 15rpx 15rpx;
 		position: relative;
 		width: 532rpx;
 		min-height: 156rpx;
-		background: rgba(255, 255, 255, 1);
+		//background: rgba(255, 255, 255, 1);
+		//background: #4BA4F3;
+		background-color: rgba(69, 72, 77, 0.918);
+		//box-shadow: 0 4rpx 16rpx 0 rgba(20, 100, 255, 0.24);
 		//background: rgb(19, 216, 45);
-		box-shadow: -12rpx 4rpx 16rpx 0px rgba(69, 112, 255, 0.08);
+		//box-shadow: -12rpx 4rpx 16rpx 0px rgba(69, 112, 255, 0.08);
 		margin-bottom: 50rpx;
+		color: #FFFFFF;
 	}
 	
 	.dialogBox {
 		min-height: 0rpx;
 		padding: 20rpx 0;
+		font-size: 27rpx;
+		p{
+		   text-indent: 15rpx;
+		   padding-left: 10rpx;
+		   padding-right: 10rpx;
+		}
 	}
+
 	
 	.dialogBoxP0 {
 		border-radius: 0 38rpx 38rpx 38rpx;
