@@ -9,7 +9,8 @@
 		</div>
 		<div class="footer-textarea flexRowAlign" v-if="!footShow">
 			<image src="/static/img/voiceIcon.png" @click="toTxt"></image>
-			<input v-model="textcontent" @confirm="sendTextInput($event,'textInput')" @blur="hideTxt" type="text"  cursor-spacing="15" confirm-type="send" placeholder="输入你想知道的问题" placeholder-style="color:#A6A6A6;font-size:28rpx;">
+			 <input v-model="textcontent" @confirm="sendTextInput($event,'textInput')"  type="text"  cursor-spacing="15" confirm-type="send" placeholder="输入你想知道的问题" placeholder-style="color:#A6A6A6;font-size:28rpx;">
+			
 			<button @click="send">发送</button>
 			
 		</div>
@@ -18,8 +19,9 @@
 </template>
 
 <script>
-import { answerTextz } from "@/utils/wxRequest";
-import { Voice } from "@/utils/wxRequest";
+import { answerTextz } from "@/utils/wxRequest"
+import { Voice } from "@/utils/wxRequest"
+import mpInput from 'mpvue-weui/src/input/index'
 	let voiceing = {
 		timeStamp: 0,
 		clientY: 0,
@@ -42,6 +44,9 @@ import { Voice } from "@/utils/wxRequest";
 				footShow:false,
 				textcontent:'',
 			}
+		},
+		components:{
+			mpInput
 		},
 
 		mounted() {

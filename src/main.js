@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App'
-//import WXrequest  from '@/utils/wx-request'
-//Vue.prototype.$httpWX = WXrequest;
+import 'mpvue-weui/src/style/weui.css'
 Vue.config.productionTip = false
 App.mpType = 'app'
 wx.authorize({
@@ -26,5 +25,6 @@ wx.authorize({
 		});
 	}
 })
+
 const app = new Vue(App)
 app.$mount()

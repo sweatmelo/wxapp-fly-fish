@@ -37,36 +37,6 @@ const RESULT_LEVEL = 'complete'
 
 }
 
-
-// export function Text(data)  {
-
-// 	const url = 'http://autotest.openspeech.cn/wechat-aiui/aiui/text'
-		
-		
-// 		return new Promise((resolve, reject) => {
-// 			 wx.request({
-// 				url: url,
-// 				method: 'POST',
-// 				data:{
-// 					json:data
-// 				},
-// 				header: {
-// 					openId: '123',
-// 					auth_id: '123',
-// 					data_type: 'text',
-				
-
-// 				},
-// 				success: function(res) {
-// 					resolve(res)
-// 				},
-// 				fail: function(res) {
-// 					reject(res)
-// 				}
-// 			})
-// 		})
-	
-// 	}
 	export function Voice(data)  {
 
 		const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/file'

@@ -3,7 +3,6 @@
 		<!--录音模态框-->
 		 <record-voice v-if="isVoicing"></record-voice> 
 		<div class="home-chat">
-			<!--head-->
 			<div class="iconheadBox">
 				<head-detail></head-detail>				
 			</div>
@@ -20,19 +19,74 @@
 						<audio :src="chat.audioSrc" :author="chat.audioSinger" :name="chat.audioName" id="'audio'+ind " :poster="chat.audioPic" controls=true></audio> 
 						</div>
 						
+     
 						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '3'">
-							<!--wenben-->
-							<div class="dialogBox">
-								
-							<p class="titleAnswer">{{chat.textDesc}}</p>	
+							<div class="dialogBox">	
+							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
 						</div>
+						</div>
+
+						
+						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '5'">
+							<div class="dialogBoxDial">	
+							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}} </p>
+							<div style="float:right;margin-top:10rpx; margin-right:20rpx;">
+							<button class="mini-btn" type="primary" size="mini" @click="toDial(chat.code)">拨打</button>
+							</div>
+						</div>
+						</div>
+                           
+						<div style="margin-top:28rpx; margin-left: 8rpx; " v-if="chat.type == '4' ">
+						   <div class="dialogBox">	
+							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
+						</div>
+						
+							<div v-if="chat.simData.length>=5">
+						 <swiper
+						  :indicator-dots= true  
+						:interval='3000'
+						:duration='1000'
+						:circular='true'
+						style="height:500rpx;"
+								>
+							 <swiper-item  
+								v-for="(add,index) in chat.data" 
+								:key="index" 
+								>
+							<div v-for="(add1,index1) in add" :key="index" class="mapDetail" @click="toMap(add1)">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.name}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:360rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.address}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.distance }}</div>
+							</div>
+                            </swiper-item>
+                              </swiper>
+						
+						</div>
+						<div v-else>
+								<div v-for="(add1,index1) in chat.simData" :key="index" class="mapDetail" @click="toMap(add1)">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.name}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:330rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.address}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.distance }}</div>
+							</div>
+						</div>
+						
 						</div>
 						<!--pic-->
-						<div class="answerBox" style="margin-top: 56rpx;" v-if="chat.type == '4'">
+						<!-- <div class="answerBox" style="margin-top: 56rpx;" v-if="chat.type == '4'">
 							<div class="imgBox">
 								<div class="img-column column">
 									<image :src="chat.imgSrc[0]" mode="aspectFill"></image>
-									<!--<p class="textEllipsisTwo" v-if="chat.flag==1">{{chat.textDesc}}</p>-->
+									<p class="textEllipsisTwo" v-if="chat.flag==1">{{chat.textDesc}}</p>
 									<p class="textEllipsisTwo"> {{chat.txt}}</p>
 									<div class="btn" v-if="chat.isDetails" @click="toLinkImg(chat)">查看详情 ></div>
 								</div>
@@ -51,9 +105,9 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> -->
 						<!--video-->
-						<div  style="margin-top: 56rpx;" v-if="chat.type == 5">
+						<!-- <div  style="margin-top: 56rpx;" v-if="chat.type == 5">
 							<div class="videoBox">
 								<div class="video-column "> 
 									<div class="mengcen" @click.stop="videoTap(chat)" :style="{backgroundImage: 'url('+chat.videoImgSrc+')',backgroundSize: '100% 100%'}">
@@ -61,7 +115,7 @@
 											<image src="/static/img/play.png"></image>
 										</div>
 									</div>
-								</div>
+								</div> -->
 								<!--<div class="agreeBox" style="width:532rpx">
 									 <div class="smallAgreeBox">
 										<div class="zan" @click="handleType(chat,'yes')">
@@ -76,8 +130,8 @@
 										</div>
 									</div> 
 								</div>-->
-							</div>
-						</div>
+							<!-- </div>
+						</div> -->
 						 
 						<!--点击品牌介绍显示对应一级的数据-->
 						<!-- <div class="answerBox" style="margin-top: 56rpx;" v-if="chat.type == 6 && chat.listOne.length!=0">
@@ -297,6 +351,7 @@
 	import {answerTextz,program} from "@/utils/wxRequest"
 	import { formatNavigateTo } from "@/utils/index";
 	import headDetail from "@/components/head"
+	import mpButton from 'mpvue-weui/src/button/index'
 	
 	let currentAudioSrc = {};
 	let audioContextSrc = {};
@@ -304,6 +359,11 @@
 	let homeListOne = [];
 	let homeListTwo;
 	let homeListQuestion = [];
+	let QQMapWX = require('../../utils/qqmap-wx-jssdk.js').default
+		 let qqmapsdk = new QQMapWX({
+						key: '6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD'
+					})
+
 	export default {
 		onLoad() {
 			this.chatBoxData = [
@@ -317,7 +377,7 @@
 		},
 		data() {
 			return {
-				
+				key :'6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD',
 				isIphoneX: false,
 				toView: 'bottom0',
 				isVoicing: false, //控制正在说话的动画
@@ -340,6 +400,8 @@
 				//slectOneList: [],
 				//modelData: [],
 				map: {},
+				latitude: '',
+				longitude: '',
 			}
 		},
 		mounted() {
@@ -350,7 +412,14 @@
 						that.isIphoneX = true;
 					}
 				}
-			});
+			})
+			 wx.getLocation({
+						type: 'wgs84',
+						success (res) {
+						 that.latitude = res.latitude
+						 that.longitude = res.longitude
+						}
+						})
 		},
 		components: {
 			recordVoice,
@@ -358,29 +427,59 @@
 			footComponent,
 			videoDetail,
 			headDetail,
+			mpButton,
 		},
+	
+	  created() {
+		    
+	  },
 		methods: {
-			recordStart() {
+			detail(intent){
+				wx.setStorageSync('intent', intent)
+				
+				 formatNavigateTo(
+				 	"/pages/paramDetail/main?"
+				 );
+				
+			},
+			toMap(item){				
+			this.map.latitude =item.latitude
+			this.map.longitude = item.longitude
+			this.map.address = item.address
+			let referer = 'fly-fish-voice';   //调用插件的app的名称
+			let endPoint = JSON.stringify({  //终点
+			'name': this.map.address,
+			'latitude': parseFloat(this.map.latitude),
+			'longitude': parseFloat(this.map.longitude)
+			});
+		
+			wx.navigateTo({
+				url: 'plugin://routePlan/index?key=' + this.key+ '&referer=' + referer + '&endPoint=' + endPoint +'&navigation=1'
 			
+			})
+			},
+			toDial(code){
+				 wx.makePhoneCall({
+             phoneNumber: code,
+             })
+			},
+			recordStart() {	
 			this.isVoicing = true;
 			},
 			recordEnd() {
-				this.isVoicing = false;
-				
+				this.isVoicing = false;		
 			},
 			programer(res){
-				console.log('rwet')
-				let a =res.data.data
-				
-	        let audioObj = {
-			type: 2,
-			//audioSinger: intent.data.result[0].singerName, //歌手
-			audioSrc: a.trackList[0].playUrl, //播放地址
-			audioPic: a.logoUrl, //专辑图片
-			audioName: a.albumName, //歌名
-								}
-								console.log(audioObj)
-			this.pushData(audioObj)
+				let a =res.data.data	
+				let audioObj = {
+				type: 2,
+				//audioSinger: intent.data.result[0].singerName, //歌手
+				audioSrc: a.trackList[0].playUrl, //播放地址
+				audioPic: a.logoUrl, //专辑图片
+				audioName: a.albumName, //歌名
+							}
+				console.log(audioObj)
+				this.pushData(audioObj)
 			},
 			/* 数据放入数组内，可用 */
 			pushData(opt) {
@@ -392,108 +491,83 @@
 					}, 10);
 				});
 			},
-
-//     txtAnswer(resData) {
-//     let that = this
-//     answerTextz(resData).then(res => {
-//         if (res.data.code == '0') { 
-//             let answerData = res.data.data
-//             answerData.forEach(e => {
-//                 if (e.sub == 'tpp') {
-// 					let content = JSON.parse(e.content)
-// 					console.log(content)
-// 					let moreResults = content.intent.moreResults
-//                     moreResults.forEach(e => {
-//                         if (e.rc == 0 && (e.semantic.slots.hasOwnProperty('song') ||e.semantic.slots.hasOwnProperty('artist'))) { //搜索歌曲
-//                             if (e.answer.text && e.answer.type != 'NULL') {
-//                                 let tempObj = { //歌曲播放提示
-//                                     type: 3,
-//                                     textDesc: e.answer.text,
-//                                 }
-//                                 that.pushData(tempObj)
-//                                 let audioObj = {
-//                                     type: 2,
-//                                     audioSinger: e.data.result[0].singerName, //歌手
-//                                     audioSrc: e.data.result[0].playUrl, //播放地址
-//                                     audioPic: e.data.result[0].picMin, //专辑图片
-//                                     audioName: e.data.result[0].songName, //歌名
-//                                 }
-//                                 that.pushData(audioObj)
-//                             } else {
-//                                 let tempObj = {
-//                                     type: 3,
-//                                     textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢'
-//                                 }
-//                                 that.pushData(tempObj)
-//                             }
-//                         } else if(e.rc == 0 && e.answer.type == 'NULL' && e.hasOwnProperty('semantic')){
-// 			 						let tempObj1 = {
-// 										type: 3,
-// 										textDesc: '抱歉，没有找到你想要的答案，我会继续学习新技能的',
-// 									 }
-									
-// 								that.pushData(tempObj1);
-// 						} else if(e.rc == 3  && e.hasOwnProperty('semantic')){
-// 			 						let tempObj1 = {
-// 										type: 3,
-// 										textDesc: content.intent.answer.text,
-// 									 }
-// 								that.pushData(tempObj1);
-// 						}
-//                     })
-
-//                 }
-//             })
-//         }
-//     })
-// },
     txtAnswer(resData) {
-    let that = this
+	let that = this
     answerTextz(resData).then(res => {
         if (res.data.code == '0') { 
 			let answerData = res.data.data
-			console.log(answerData)
+			//console.log(answerData)
             answerData.forEach(e => {
                 if (e.sub == 'tpp') {
 					let content = JSON.parse(e.content)
 					let intent = content.intent //变成了data字段
 					console.log(intent)
-					if(intent.rc == 0 && !intent.hasOwnProperty('semantic') ){ //瞎输的英文字符
-						   let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.text,
-									 }
-							that.pushData(tempObj1)
-							return
-					}
-					if(intent.service == 'mapU'){
-						//console.log('111')
-						this.map.latitude = intent.data.result[0].latitude
-						this.map.longitude = intent.data.result[0].longitude
-						this.map.address =  intent.data.result[0].address
-						let map = JSON.stringify(this.map)
-				       formatNavigateTo(
-					    "/pages/map/main?map=" + map
-				        )
-					     return
-					}
-					if(intent.semantic.slots.hasOwnProperty('insType')){  //播放操作
-					    let tempObj = { 
+					 if(intent.operation == 'INSTRUCTION'){  //播放操作
+					    if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
                                     type: 3,
-                                    textDesc: intent.text + '请您手动操作哦~',
-                                }
-                                that.pushData(tempObj)
-					}
-					if(!intent.hasOwnProperty('data')){
-						let tempObj = { 
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
                                     type: 3,
-                                    textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
-                                }
-                                that.pushData(tempObj)
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return	
 					}
-				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+					if(intent.service == 'app'){
+						 if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return
+					}
+					if(intent.service == 'chat' || intent.service == 'carControl'){
+						 if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return
+					}
+					if(intent.service == 'weather'){
+						const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text,
+									intent:intent
+								}
+								that.pushData(tempObj)
+					}
+					
+					if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
 						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
-							console.log('qwe')
+					
                             if (intent.answer.text && intent.type != 'NULL' ){
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){ 
 									 let album = intent.data.result[0].albumId //节目相声
@@ -507,6 +581,7 @@
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
                                     textDesc: intent.answer.text,
+									intent:intent
                                 }
                                 that.pushData(tempObj)
                                 let audioObj = {
@@ -518,39 +593,74 @@
 								}
 								that.pushData(audioObj)
 								return
-                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
-                                let tempObj = {
-                                    type: 3,
-                                    textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+				 			}
+				 		}
+
+						
+					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
+					  console.log('tel')
+						   let tempObj1 = {
+										type: 5,
+										textDesc: intent.answer.text,
+										code:intent.searchSemantic.code
+									 }
+							that.pushData(tempObj1)
+							return
+					}
+
+					if(intent.service == 'mapU') {	
+						console.log('map')			
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })
+				       data.forEach(e =>{
+						//调用距离计算接口
+						qqmapsdk.calculateDistance({
+			
+							from: {
+								latitude:that.latitude,
+								longitude:that.longitude
+							}, 
+							to:[{
+								latitude: parseFloat(e.latitude),
+								longitude: parseFloat(e.longitude)
+							}], 
+							success: function(res) {//成功后的回调
+							if(res.hasOwnProperty('result'))
+							   e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
+						
+								},
+							fail: function(error) {
+							console.error(error)
+							 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
+							},
+							complete: function(res) {
+							console.log(res);
+							}
+						});
+				   })
+				   let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 console.log(result)
+					 let tempObj = { 
+                                    type: 4,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
                                 }
-								that.pushData(tempObj)
-								return
-                            }
-						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
-							 
-			 						let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.text,
-									 }
-								that.pushData(tempObj1)
-						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {	
-								
-							let tempObj1 = {
-										type: 3,
-										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢' ,
-									 }
-								that.pushData(tempObj1)
-						} else{
-							let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.text,
-									 }
-								that.pushData(tempObj1)
-						}
-				} 
-            })
-        }
-    })
+                                that.pushData(tempObj)
+					      return
+					}
+					
+			}
+		})
+	}	
+	})
+		
 },
 
 			voiceAnswer(content) {
@@ -806,58 +916,7 @@
 			//回答问题的接口
 			answerOperate(resData, type) {
 				let that = this;
-				// if(type == 6) {
-				// 	//品牌介绍获取以及引导答案
-				// 	homeListOne = [];
-				// 	homeListQuestion = [];
-				// 	homeListData.forEach(item => {
-				// 		if(item.categoryName == resData) {
-				// 			let oneData = item.examples;
-				// 			let objTemp = {
-				// 				listOne: []
-				// 			};
-				// 			oneData.forEach(itemData => {
-				// 				objTemp.type = 6; //表示品牌介绍的一级引导
-				// 				objTemp.listOne.push(itemData.example);
-				// 				homeListOne.push(itemData);
-				// 			})
-				// 			homeListQuestion = item.question;
-				// 			that.chatBoxData.push(objTemp);
-				// 		}
-				// 	})
-				// } else if(type == 7) {
-				// 	//品牌介绍获取二级引导答案
-				// 	homeListOne.forEach(item => {
-				// 		if(item.example == resData) {
-				// 			if(item.select.length != 0) {
-				// 				let objTemp = {
-				// 					select: []
-				// 				};
-				// 				objTemp.type = 7;
-				// 				objTemp.select = item.select;
-				// 				that.chatBoxData.push(objTemp);
-				// 			} else {}
-				// 		}
-				// 	})
-				// } else if(type == 8) {
-				// 	//品牌介绍获取三级引导答案
-				// 	homeListTwo = resData;
-				// 	if(homeListQuestion.length != 0) {
-				// 		let objTemp = {
-				// 			homeListQuestion: []
-				// 		};
-				// 		objTemp.type = 8;
-				// 		objTemp.homeListQuestion = homeListQuestion;
-				// 		that.chatBoxData.push(objTemp);
-				// 	} else {
-				// 		let txtData = "什么是" + resData;
-				// 		that.txtAnswer(txtData);
-				// 	}
-				// } else if(type == 1) {
-				// 	//品牌介绍获取答案
-				// 	let txtData = homeListTwo + resData;
-				// 	that.txtAnswer(txtData);
-				// } else
+			
 				 if(type == 'voice') {
 					that.voiceAnswer(resData);
 				} else {
@@ -886,7 +945,6 @@
 			},
 			//输入框发送
 			sendTextInput(val, type) {
-				//				console.log(val)
 				if(type == 0) {
 					
 				} else if(val.type == 'textInput') {
@@ -941,47 +999,126 @@
 					let tempObj = {}
 					tempObj.textDesc = "抱歉，我还没有听清你的问题呢"
 					tempObj.type = 3
-					//this.enter(1,'您好像没有说话呢~')
 					this.pushData(tempObj)
 					return
 				 } 
 				 that.enter(1, val.text) 
 				 let intent = val.content.intent
 				 //console.log(val.content.intent)
-				 if(intent.rc == 0 && !intent.hasOwnProperty('semantic') ){ //瞎输的英文字符
+				
+				    	 if(intent.operation == 'INSTRUCTION'){  //播放操作
+					    if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return	
+					}
+					
+					if(intent.service == 'app'){
+						 if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return
+					}
+					if(intent.service == 'chat' || intent.service == 'carControl'){
+						 if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+						return
+					}	
+					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
 						   let tempObj1 = {
-										type: 3,
+										type: 5,
 										textDesc: intent.answer.text,
+										code:intent.searchSemantic.code
 									 }
 							that.pushData(tempObj1)
 							return
 					}
-					if(intent.service == 'mapU'){
-						console.log('111')
-						this.map.latitude = intent.data.result[0].latitude
-						this.map.longitude = intent.data.result[0].longitude
-						this.map.address =  intent.data.result[0].address
-						let map = JSON.stringify(this.map)
-						//console.log(map)
-				       formatNavigateTo(
-					    "/pages/map/main?map=" + map
-				        )
-					     return
-					}
-					if(intent.semantic.slots.hasOwnProperty('insType')){  //播放操作
-					    let tempObj = { 
-                                    type: 3,
-                                    textDesc: intent.text + '请您手动操作哦~',
+
+					if(intent.service == 'mapU') {	
+						console.log('map')			
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })
+				       data.forEach(e =>{
+						//调用距离计算接口
+						qqmapsdk.calculateDistance({
+			
+							from: {
+								latitude:that.latitude,
+								longitude:that.longitude
+							}, 
+							to:[{
+								latitude: parseFloat(e.latitude),
+								longitude: parseFloat(e.longitude)
+							}], 
+							success: function(res) {//成功后的回调
+							if(res.hasOwnProperty('result'))
+							   e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
+						
+								},
+							fail: function(error) {
+							console.error(error)
+							 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
+							},
+							complete: function(res) {
+							console.log(res);
+							}
+						});
+				   })
+				   let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 console.log(result)
+					 let tempObj = { 
+                                    type: 4,
+									textDesc: intent.answer.text,
+									intent: intent,
+									data:result,
+									simData:intent.data.result
                                 }
                                 that.pushData(tempObj)
+					      return
 					}
-					if(!intent.hasOwnProperty('data')){
-						let tempObj = { 
-                                    type: 3,
-                                    textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
-                                }
-                                that.pushData(tempObj)
-					}
+				
 				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
 						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
 							console.log('qwe')
@@ -1026,29 +1163,9 @@
 										textDesc: intent.answer.text,
 									 }
 								that.pushData(tempObj1)
-						} else if(intent.rc == 4 && intent.hasOwnProperty('error')) {	
-								
-							let tempObj1 = {
-										type: 3,
-										textDesc: '抱歉我没有找到对应的结果呢！我会继续努力学习的呢' ,
-									 }
-								that.pushData(tempObj1)
-						} else{
-							let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.text,
-									 }
-								that.pushData(tempObj1)
-						}
+						} 
 				} 
-				//else if(val.text != '' && val.content.intent.rc == 4) {
-				// 	this.enter(1, val.text);
-				// 	val.answer.intent.text = "抱歉，没有找到你想要的答案，我会继续学习新技能的";
-				// 	this.answerOperate(val.content, 'voice');
-				// } else if(val.text != '' && val.content.intent.rc == 0) {
-				// 	this.enter(1, val.text);
-				// 	this.answerOperate(val.content, 'voice');
-				// }
+				
 			},
 			
 		
@@ -1057,7 +1174,7 @@
 				let studyListRequests = JSON.stringify(this.studyListRequests);
 				formatNavigateTo(
 					"/pages/skill/main?liftTitle=" + studyListRequests
-				);
+				)
 			},
 			toTxt() {
 				let that = this;
@@ -1157,10 +1274,16 @@
 		background-color: #F8FAFF;
 	}
 	/*飞鱼形象*/
-	
-	.scrollWidth{
-		margin-top: 6rpx;
-	}
+	.wx-swiper-dots {
+
+  position: relative;
+
+  left: unset !important;
+
+  right: 0;
+
+}
+
 	
 	.headImg {
 		width: 234rpx;
@@ -1210,6 +1333,7 @@
 		box-shadow: 0 4rpx 16rpx 0 rgba(149, 150, 156, 0.24);
 	}
 	
+	
 	.dialogBox,
 	.imgBox,
 	.pinpaiOneBox,
@@ -1218,18 +1342,42 @@
 		position: relative;
 		width: 532rpx;
 		min-height: 156rpx;
-		//background: rgba(255, 255, 255, 1);
-		//background: #4BA4F3;
 		background-color: rgba(69, 72, 77, 0.918);
-		//box-shadow: 0 4rpx 16rpx 0 rgba(20, 100, 255, 0.24);
-		//background: rgb(19, 216, 45);
-		//box-shadow: -12rpx 4rpx 16rpx 0px rgba(69, 112, 255, 0.08);
-		margin-bottom: 50rpx;
+		margin-bottom: 40rpx;
 		color: #FFFFFF;
 	}
-	
+	.swiperindot{
+		border-radius: 0 15rpx 15rpx 15rpx;
+		position: relative;
+		width: 532rpx;
+		min-height: 50rpx;
+		background-color: rgba(69, 72, 77, 0.918);
+		margin-bottom: 40rpx;
+		color: #FFFFFF;
+	}
+	.mapDetail{
+		border-radius: 15rpx 15rpx ;
+		position: relative;
+		width: 532rpx;
+		font-size:28rpx;
+		min-height: 90rpx;
+		border-bottom:1px solid white;	
+		background-color:#5E5D5D;
+		color: #FFFFFF;
+	}
+	.mapDetail:hover{
+		border-radius: 15rpx 15rpx ;
+		position: relative;
+		width: 532rpx;
+		font-size:28rpx;
+		min-height: 80rpx;
+		border-bottom:1px solid white;	
+		//background-color:#5E5D5D;
+		background-color: rgba(69, 72, 77, 0.918);
+		color: #FFFFFF;
+	}
 	.dialogBox {
-		min-height: 0rpx;
+		min-height: 50rpx;
 		padding: 20rpx 0;
 		font-size: 27rpx;
 		p{
@@ -1238,19 +1386,24 @@
 		   padding-right: 10rpx;
 		}
 	}
-
-	
-	.dialogBoxP0 {
-		border-radius: 0 38rpx 38rpx 38rpx;
+	.dialogBoxDial{
+		//min-height: 60rpx;
+		padding: 20rpx 0;
+		font-size: 27rpx;
+		border-radius: 0 15rpx 15rpx 15rpx;
 		position: relative;
 		width: 532rpx;
-		min-height: 312rpx;
-		background: rgba(255, 255, 255, 1);
-		box-shadow: -12rpx 4rpx 16rpx 0px rgba(69, 112, 255, 0.08);
-		min-height: 0rpx;
-		padding: 20rpx 0;
+		min-height: 156rpx;
+		background-color: rgba(69, 72, 77, 0.918);
+		margin-bottom: 40rpx;
+		color: #FFFFFF;
+		p{
+		   text-indent: 15rpx;
+		   padding-left: 10rpx;
+		   padding-right: 10rpx;
+		}
 	}
-	
+
 	.eyeImg {
 		width: 10rpx;
 		height: 10rpx;

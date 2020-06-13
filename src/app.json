@@ -3,7 +3,8 @@
     "pages/index/main",
     "pages/detail/main",
     "pages/skill/main" ,
-    "pages/map/main"
+    "pages/map/main",
+    "pages/paramDetail/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

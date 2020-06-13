@@ -1,10 +1,5 @@
 <template>
   <div class="audioPage" >
-      <div class="audioCont">
-
-         <button @click="guide">测试导航</button>
-      </div>
-
       
   </div>
 
@@ -19,19 +14,15 @@ export default {
 
   data() {
     return {
-     audioSrc:'',
-     audioSinger:'',
-     audiopic:'',
-     show: false,
+     
       key :'6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD',
     };
   },
  
   methods: {
-   
-
-// 事件触发，调用接口
-      guide() {
+    
+  },
+  mounted(){
      let plugin = requirePlugin('routePlan')
      let map= JSON.parse(this.$root.$mp.query.map)
      console.log(map)  
@@ -46,12 +37,9 @@ export default {
     wx.navigateTo({
         url: 'plugin://routePlan/index?key=' + this.key+ '&referer=' + referer + '&endPoint=' + endPoint +'&navigation=1'
       
-    });
-      },
+    })
       
-  },
-  created() {
-  },
+  }
 
  }
 
