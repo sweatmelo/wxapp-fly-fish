@@ -9,7 +9,7 @@
 		</div>
 		<div class="footer-textarea flexRowAlign" v-if="!footShow">
 			<image src="/static/img/voiceIcon.png" @click="toTxt"></image>
-			 <input v-model="textcontent" @confirm="sendTextInput($event,'textInput')"  type="text"  cursor-spacing="15" confirm-type="send" placeholder="输入你想知道的问题" placeholder-style="color:#A6A6A6;font-size:28rpx;">
+			 <input v-model="textcontent" @confirm="sendTextInput($event,'textInput')"  type="text"  cursor-spacing="15" confirm-type="send" placeholder="输入你想知道的问题" placeholder-style="color:#A6A6A6;font-size:28rpx;margin-left:10rpx;">
 			
 			<button @click="send">发送</button>
 			
@@ -50,18 +50,7 @@ import mpInput from 'mpvue-weui/src/input/index'
 		},
 
 		mounted() {
-			/*录音系统回调*/
-			// recorderManager.onStart(() => {
-			// 	let that = this;
-			// 	if(voiceing.status == "end") {
-			// 		recorderManager.stop()
-			// 	} else {
-			// 		that.$emit("recordStart")
-			// 		voiceing.status = "success"
-			// 		wx.vibrateShort()
-					
-			// 	}
-			// });
+			
 				recorderManager.onStart(() => {
 				let that = this;
 				if(voiceing.status == "end") {
@@ -114,7 +103,6 @@ import mpInput from 'mpvue-weui/src/input/index'
 			//控制显示图标
 			showIcon() {
 				this.footShow = false;
-				console.log(this)
 			},
 			toTxt() {
 				let that = this
@@ -239,12 +227,13 @@ import mpInput from 'mpvue-weui/src/input/index'
 	.voice  {
 		margin-top: 8rpx;
 		margin-left: 8vw;
-		width: 50vw;
-		height: 70rpx;
+		width: 58vw;
+		height: 72rpx;
 		font-size: 30rpx;
 		text-align: center;
 		line-height: 70rpx;
 		background-color:rgba(6, 80, 80, 0.445);
+		border-radius: 15px 15px 15px 15px;
 		
 	}
 	

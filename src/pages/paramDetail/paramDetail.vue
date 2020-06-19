@@ -21,10 +21,8 @@ export default {
   },
     mounted() {
          let msg =wx.getStorageSync('intent')
-        let tem = JSON.stringify(JSON.parse(JSON.stringify(JSON.parse(JSON.stringify(JSON.parse( JSON.stringify(JSON.parse( JSON.stringify(msg,null,2),null,2 ))),null,2)),null,2)),null,2)
-        console.log(this.msg)
-        this.msg = '<pre>'+tem+'</pre>'
-      
+        let tem = JSON.stringify(JSON.parse( JSON.stringify(JSON.parse( JSON.stringify(msg,null,2),null,2 ))),null,2)
+        this.msg = '<pre>'+tem+'</pre>'    
     },
     
 }

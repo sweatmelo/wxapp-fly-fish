@@ -19,13 +19,13 @@
 			"disablePlugins": [],
 			"outputPath": ""
 		},
-		"useCompilerModule": false,
+		"useCompilerModule": true,
 		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
 	"appid": "wx8d6df026993d12bf",
-	"projectname": "motormaster-master",
+	"projectname": "fly-fish-voive",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {

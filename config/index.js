@@ -55,7 +55,7 @@ module.exports = {
     // 在小程序开发者工具中不需要自动打开浏览器
     autoOpenBrowser: false,
     assetsSubDirectory: '',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
     proxyTable: {
       '/api': {
         target: 'http://localhost:8000/', // 设置你调用的接口域名和端口号

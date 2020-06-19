@@ -341,17 +341,11 @@
 </template>
 
 <script>
-	import recordVoice from "@/components/recording"
-	import recommendList from "@/components/recommendList"
+	import recordVoice from "@/components/recording"	
 	import footComponent from "@/components/footer"
-	import textDetail from "@/components/textDetail"
-    import videoDetail from "@/components/video"
-	import satisfaction from "@/components/satisfaction"
-	import { answerText } from "@/utils/wx-request";
-	import {answerTextz,program} from "@/utils/wxRequest"
-	import { formatNavigateTo } from "@/utils/index";
+	import {answerTextz,program,TTS} from "@/utils/wxRequest"
+	import { formatNavigateTo } from "@/utils/index"
 	import headDetail from "@/components/head"
-	import mpButton from 'mpvue-weui/src/button/index'
 	
 	let currentAudioSrc = {};
 	let audioContextSrc = {};
@@ -363,13 +357,21 @@
 		 let qqmapsdk = new QQMapWX({
 						key: '6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD'
 					})
-
+     // properties(Read only)(duration,currentTime,paused,buffered,volume)
+	 // properties(src,startTime,autoplay,loop,obeyMuteSwitch)
+	 
 	export default {
 		onLoad() {
 			this.chatBoxData = [
 				{type: 3,
 				textDesc: '你好，很高兴见到你。你可以使用文本或者语音跟我对话~'
 			}]
+			 TTS('你好，很高兴见到你。你可以使用文本或者语音跟我对话~').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 		},
 		onUnload() {
 			this.pageNum = 1;
@@ -402,6 +404,7 @@
 				map: {},
 				latitude: '',
 				longitude: '',
+				innerAudioContext:''
 			}
 		},
 		mounted() {
@@ -420,14 +423,12 @@
 						 that.longitude = res.longitude
 						}
 						})
+			this.innerAudioContext= wx.createInnerAudioContext();
 		},
 		components: {
-			recordVoice,
-			recommendList,
+			recordVoice,	
 			footComponent,
-			videoDetail,
 			headDetail,
-			mpButton,
 		},
 	
 	  created() {
@@ -473,12 +474,10 @@
 				let a =res.data.data	
 				let audioObj = {
 				type: 2,
-				//audioSinger: intent.data.result[0].singerName, //歌手
 				audioSrc: a.trackList[0].playUrl, //播放地址
 				audioPic: a.logoUrl, //专辑图片
 				audioName: a.albumName, //歌名
 							}
-				console.log(audioObj)
 				this.pushData(audioObj)
 			},
 			/* 数据放入数组内，可用 */
@@ -502,7 +501,7 @@
 					let content = JSON.parse(e.content)
 					let intent = content.intent //变成了data字段
 					console.log(intent)
-					 if(intent.operation == 'INSTRUCTION'){  //播放操作
+						 if(intent.operation == 'INSTRUCTION' || intent.operation == 'SET'){  //播放操作
 					    if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
                                     type: 3,
@@ -520,6 +519,7 @@
 						}
 						return	
 					}
+					
 					if(intent.service == 'app'){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
@@ -555,6 +555,16 @@
 								that.pushData(tempObj)
 						}
 						return
+					}	
+					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
+						   let tempObj1 = {
+										type: 5,
+										textDesc: intent.answer.text,
+										code:intent.searchSemantic.code,
+										intent:intent
+									 }
+							that.pushData(tempObj1)
+							return
 					}
 					if(intent.service == 'weather'){
 						const tempObj = { 
@@ -564,25 +574,104 @@
 								}
 								that.pushData(tempObj)
 					}
-					
-					if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+
+					if(intent.service == 'mapU') {	
+						console.log('map')	
+						
+						if(intent.operation == 'POS_RANK'){
+							 let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text,
+									intent:intent
+                                }
+								that.pushData(tempObj)
+					      return
+						}
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })
+				      // data.forEach(e =>{
+						//调用距离计算接口
+						let toadd = []
+						data.forEach(e =>{
+							let obj = {
+								latitude: parseFloat(e.latitude),
+								longitude: parseFloat(e.longitude)
+							}
+							toadd.push(obj)
+						})
+						qqmapsdk.calculateDistance({
+			
+							from: {
+								latitude:that.latitude,
+								longitude:that.longitude
+							}, 
+							to:toadd,
+
+							success: function(res) {//成功后的回调
+							if(res.hasOwnProperty('result')){
+							data.forEach(e =>{
+								e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
+							})
+							}
+								},
+							fail: function(error) {
+							console.error(error)
+							data.forEach(e =>{
+								 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
+							})
+							},
+						
+						});
+				    let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 console.log(result)
+						 if(intent.hasOwnProperty('answer')){
+					 let tempObj = { 
+                                    type: 4,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+                                that.pushData(tempObj)
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 4,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								console.log(tempObj)
+                                that.pushData(tempObj)
+						 }
+					}
+				
+				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
 						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
-					
+							console.log('qwe')
                             if (intent.answer.text && intent.type != 'NULL' ){
-								 if(intent.semantic.slots.hasOwnProperty('presenter')){ 
+								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
 									 console.log(album)
 									 program(album).then(res =>{
 										this.programer(res)
 									 })
-									 return
+							
+									return
 								}
 								//音乐
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
-                                    textDesc: intent.answer.text,
+									textDesc: intent.answer.text,
 									intent:intent
-                                }
+								}
+								//console.log(tempObj)
                                 that.pushData(tempObj)
                                 let audioObj = {
                                     type: 2,
@@ -593,68 +682,33 @@
 								}
 								that.pushData(audioObj)
 								return
-				 			}
-				 		}
-
-						
-					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
-					  console.log('tel')
-						   let tempObj1 = {
-										type: 5,
-										textDesc: intent.answer.text,
-										code:intent.searchSemantic.code
-									 }
-							that.pushData(tempObj1)
-							return
-					}
-
-					if(intent.service == 'mapU') {	
-						console.log('map')			
-				   let data = intent.data.result
-				   data.forEach((e,ind) =>{
-					   e.list = ind+1
-				   })
-				       data.forEach(e =>{
-						//调用距离计算接口
-						qqmapsdk.calculateDistance({
-			
-							from: {
-								latitude:that.latitude,
-								longitude:that.longitude
-							}, 
-							to:[{
-								latitude: parseFloat(e.latitude),
-								longitude: parseFloat(e.longitude)
-							}], 
-							success: function(res) {//成功后的回调
-							if(res.hasOwnProperty('result'))
-							   e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
-						
-								},
-							fail: function(error) {
-							console.error(error)
-							 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
-							},
-							complete: function(res) {
-							console.log(res);
-							}
-						});
-				   })
-				   let result =[]
-                for(var i=0,len=data.length;i<len;i+=5){
-                     result.push(data.slice(i,i+5));
-				}
-						 console.log(result)
-					 let tempObj = { 
-                                    type: 4,
-                                    textDesc: intent.answer.text,
-									data:result,
-									simData:intent.data.result,
+                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
+                                let tempObj = {
+                                    type: 3,
+									textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
 									intent:intent
                                 }
-                                that.pushData(tempObj)
+								that.pushData(tempObj)
+								return
+                            }
+						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
+							 
+			 						let tempObj1 = {
+										type: 3,
+										textDesc: intent.answer.text,
+										intent:intent
+									 }
+								that.pushData(tempObj1)
+						} 	
+					if(intent.rc == '4'){
+						 let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text,
+									intent:intent
+                                }
+								that.pushData(tempObj)
 					      return
-					}
+					}	
 					
 			}
 		})
@@ -1000,13 +1054,17 @@
 					tempObj.textDesc = "抱歉，我还没有听清你的问题呢"
 					tempObj.type = 3
 					this.pushData(tempObj)
+					TTS('抱歉，我还没有听清你的问题呢').then(res =>{
+					 innerAudioContext.src = res.data.data
+					 innerAudioContext.autoplay = true
+				 })
 					return
 				 } 
-				 that.enter(1, val.text) 
+
+				 that.enter(1, val.text)
 				 let intent = val.content.intent
-				 //console.log(val.content.intent)
 				
-				    	 if(intent.operation == 'INSTRUCTION'){  //播放操作
+				    	 if(intent.operation == 'INSTRUCTION' ||  intent.operation == 'SET'){  //播放操作
 					    if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
                                     type: 3,
@@ -1014,6 +1072,12 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 						} else{
 							const tempObj = { 
                                     type: 3,
@@ -1021,9 +1085,30 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS('已为您实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 						}
 						return	
 					}
+					if(intent.rc == '4'){
+						 let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text,
+									intent:intent
+                                }
+								that.pushData(tempObj)
+						       TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+					      return
+					}	
 					
 					if(intent.service == 'app'){
 						 if(intent.hasOwnProperty('answer')){
@@ -1033,6 +1118,12 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								  TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 						} else{
 							const tempObj = { 
                                     type: 3,
@@ -1040,6 +1131,12 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })						
 						}
 						return
 					}
@@ -1051,6 +1148,13 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })			
+							   
 						} else{
 							const tempObj = { 
                                     type: 3,
@@ -1058,6 +1162,12 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })			
 						}
 						return
 					}	
@@ -1065,63 +1175,132 @@
 						   let tempObj1 = {
 										type: 5,
 										textDesc: intent.answer.text,
-										code:intent.searchSemantic.code
+										code:intent.searchSemantic.code,
+										intent:intent
 									 }
 							that.pushData(tempObj1)
+							setTimeout(function () {
+									 TTS(intent.answer.text).then(res =>{
+					 innerAudioContext.src = res.data.data
+					 innerAudioContext.autoplay = true
+				 })
+							},500)
 							return
+					}
+					if(intent.service == 'weather'){
+						const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text,
+									intent:intent
+								}
+							 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })			
+								that.pushData(tempObj)
 					}
 
 					if(intent.service == 'mapU') {	
-						console.log('map')			
+						console.log('map')	
+						
+						if(intent.operation == 'POS_RANK'){
+							 let tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.text,
+									intent:intent
+                                }
+								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })			
+					      return
+						}
 				   let data = intent.data.result
 				   data.forEach((e,ind) =>{
 					   e.list = ind+1
 				   })
-				       data.forEach(e =>{
+				      // data.forEach(e =>{
 						//调用距离计算接口
+						let toadd = []
+						data.forEach(e =>{
+							let obj = {
+								latitude: parseFloat(e.latitude),
+								longitude: parseFloat(e.longitude)
+							}
+							toadd.push(obj)
+						})
 						qqmapsdk.calculateDistance({
 			
 							from: {
 								latitude:that.latitude,
 								longitude:that.longitude
 							}, 
-							to:[{
-								latitude: parseFloat(e.latitude),
-								longitude: parseFloat(e.longitude)
-							}], 
+							to:toadd,
+
 							success: function(res) {//成功后的回调
-							if(res.hasOwnProperty('result'))
-							   e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
-						
+							if(res.hasOwnProperty('result')){
+							data.forEach(e =>{
+								e.distance = res.result.elements[0].distance >1000 ? (res.result.elements[0].distance/1000).toFixed(1) +'公里' : res.result.elements[0].distance +'米'
+							})
+							}
 								},
 							fail: function(error) {
 							console.error(error)
-							 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
+							data.forEach(e =>{
+								 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
+							})
 							},
-							complete: function(res) {
-							console.log(res);
-							}
+						
 						});
-				   })
-				   let result =[]
+				    let result =[]
                 for(var i=0,len=data.length;i<len;i+=5){
                      result.push(data.slice(i,i+5));
 				}
 						 console.log(result)
+					 if(intent.hasOwnProperty('answer')){
 					 let tempObj = { 
                                     type: 4,
-									textDesc: intent.answer.text,
-									intent: intent,
+                                    textDesc: intent.answer.text,
 									data:result,
-									simData:intent.data.result
-                                }
-                                that.pushData(tempObj)
+									simData:intent.data.result,
+									intent:intent
+								}
+								that.pushData(tempObj)
+								 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 4,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								that.pushData(tempObj)
+								 TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+						 }
+							
 					      return
 					}
 				
 				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
 						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
-							console.log('qwe')
+							//console.log('qwe')
                             if (intent.answer.text && intent.type != 'NULL' ){
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
@@ -1135,8 +1314,18 @@
 								//音乐
                                 let tempObj = { //歌曲播放提示
                                     type: 3,
-                                    textDesc: intent.answer.text,
+									textDesc: intent.answer.text,
+									intent:intent
 								}
+								
+									 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+							
+				 
 								console.log(tempObj)
                                 that.pushData(tempObj)
                                 let audioObj = {
@@ -1151,9 +1340,16 @@
                             }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {
                                     type: 3,
-                                    textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+									textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+									intent:intent
                                 }
 								that.pushData(tempObj)
+							     TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 								return
                             }
 						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
@@ -1161,7 +1357,15 @@
 			 						let tempObj1 = {
 										type: 3,
 										textDesc: intent.answer.text,
+										intent:intent
 									 }
+									 TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+									 
 								that.pushData(tempObj1)
 						} 
 				} 
@@ -1326,7 +1530,7 @@
 		box-sizing: border-box;
 		border-radius: 15px 6px 15px 15px;
 		line-height: 34rpx;
-		font-size: 28rpx;
+		font-size: 29rpx;
 		color: #FFFFFF;
 		//background-color: #4BA4F3;
 		background-color: rgb(69, 72, 77);
@@ -1379,7 +1583,7 @@
 	.dialogBox {
 		min-height: 50rpx;
 		padding: 20rpx 0;
-		font-size: 27rpx;
+		font-size: 28rpx;
 		p{
 		   text-indent: 15rpx;
 		   padding-left: 10rpx;

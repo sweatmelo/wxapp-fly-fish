@@ -63,7 +63,7 @@ const RESULT_LEVEL = 'complete'
 		 
 
 	export function program(album){
-
+		return new Promise((resolve,reject) =>{
         var value='aiuicusclientType0pageSize14c19ac6f5e4b11e88762d00d525b3d86'
        var sha1_result=sha1(value);
          wx.request({
@@ -78,31 +78,62 @@ const RESULT_LEVEL = 'complete'
                 
              },
              success: function(res) {
-				console.log(res)
-			},
-			 
-         })
-
-
-	  return new Promise((resolve,reject) =>{
-         wx.request({
-             url: 'https://autopre.openspeech.cn/api/v2.0/programe/album/'+album+'/track',
-             method: 'get',
-             data :{
-                 //hostId: '1000202',
-                 pageSize:'1',
-                 clientType:'0',
-                 sign:'6b1ab395e24cf9bfd9c0c3e85f4b94bf706cd9ab',
-                 openId:'5b319aaa'
-             },
-             success: function(res) {
 				resolve(res)
 			},
 			fail: function(err){
-				reject(err)
+				 			reject(err)
 			}
 			 
-         })
+		 })
+		})
 
-	})
+
+	//   return new Promise((resolve,reject) =>{
+    //      wx.request({
+    //          url: 'https://autopre.openspeech.cn/api/v2.0/programe/album/'+album+'/track',
+    //          method: 'get',
+    //          data :{
+    //              //hostId: '1000202',
+    //              pageSize:'1',
+    //              clientType:'0',
+    //              sign:'6b1ab395e24cf9bfd9c0c3e85f4b94bf706cd9ab',
+    //              openId:'5b319aaa'
+    //          },
+    //          success: function(res) {
+	// 			resolve(res)
+	// 		},
+	// 		fail: function(err){
+	// 			reject(err)
+	// 		}
+			 
+    //      })
+
+	// })
+}
+
+
+
+export function TTS(data)  {
+
+	const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/ttsPlay'
+	//http://172.31.198.24:10090/wechat-aiui/ttsPlay HTTP/1.1
+		return new Promise((resolve, reject) => {
+			 wx.request({
+				 url: url,
+				 method:'get',
+				 timeout:5000,
+				data:{
+					text:data,
+					character: 'x_xiaoxue'
+					
+				},
+				success: function(res) {
+					resolve(res)
+					//console.log(res)
+				},
+				fail: function(res) {
+					reject(res)
+				}
+			})
+		})
 }

@@ -1,7 +1,6 @@
 {
   "pages": [
     "pages/index/main",
-    "pages/detail/main",
     "pages/skill/main" ,
     "pages/map/main",
     "pages/paramDetail/main"
@@ -24,7 +23,10 @@
             "version": "1.0.5",
             "provider": "wx50b5593e81dd937a"
             }
-        }
+        },
+        "networkTimeout": {
+          "request": 6000
+          }
   }
   
 
