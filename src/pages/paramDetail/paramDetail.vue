@@ -24,6 +24,13 @@ export default {
         let tem = JSON.stringify(JSON.parse( JSON.stringify(JSON.parse( JSON.stringify(msg,null,2),null,2 ))),null,2)
         this.msg = '<pre>'+tem+'</pre>'    
     },
+   	onLoad() {
+			
+	  wx.showShareMenu({
+      withShareTicket: true
+    })
+		},
+    
     
 }
 </script>

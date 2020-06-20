@@ -15,14 +15,14 @@
 							<div class="v_me">{{chat.text}}</div>
 						</div>
 
-						<div class="audioPage" v-if="chat.type == '2' ">
+						<!-- <div class="audioPage" v-if="chat.type == '2' ">
 						<audio :src="chat.audioSrc" :author="chat.audioSinger" :name="chat.audioName" id="'audio'+ind " :poster="chat.audioPic" controls=true></audio> 
-						</div>
+						</div> -->
 						
      
 						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '3'">
-							<div class="dialogBox">	
-							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
+							<div class="dialogBox" @click="detail(chat.intent)">	
+							<p class="titleAnswer" >{{chat.textDesc}}</p>
 						</div>
 						</div>
 
@@ -53,7 +53,7 @@
 								v-for="(add,index) in chat.data" 
 								:key="index" 
 								>
-							<div v-for="(add1,index1) in add" :key="index" class="mapDetail" @click="toMap(add1)">	
+							<div v-for="(add1,index1) in add" :key="index" class="mapDetail">	
 	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
 						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
 							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.name}}</span>
@@ -68,7 +68,7 @@
 						
 						</div>
 						<div v-else>
-								<div v-for="(add1,index1) in chat.simData" :key="index" class="mapDetail" @click="toMap(add1)">	
+								<div v-for="(add1,index1) in chat.simData" :key="index" class="mapDetail">	
 	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
 						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
 							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.name}}</span>
@@ -77,6 +77,101 @@
 								   </div>
 						    </div>
 						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.distance }}</div>
+							</div>
+						</div>
+						
+						</div>
+
+
+						<div style="margin-top:28rpx; margin-left: 8rpx; " v-if="chat.type == '8' ">
+						  <!--  <div class="dialogBox">	
+							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
+						</div> -->
+						
+							<div v-if="chat.simData.length>=5">
+						 <swiper
+						  :indicator-dots= true  
+						:interval='3000'
+						:duration='1000'
+						:circular='true'
+						style="height:500rpx;"
+								>
+							 <swiper-item  
+								v-for="(add,index) in chat.data" 
+								:key="index" 
+								>
+							<div v-for="(add1,index1) in add" :key="index" class="mapDetail">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">
+									{{add1.departCity}}--->{{add1.arriveCity}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:360rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.startTime}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.flightInfo }}</div>
+							</div>
+                            </swiper-item>
+                              </swiper>
+						
+						</div>
+						<div v-else>
+								<div v-for="(add1,index1) in chat.simData" :key="index" class="mapDetail">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.departCity}}--->{{add1.arriveCity}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:330rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.startTime}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.flightInfo}}</div>
+							</div>
+						</div>
+						
+						</div>
+
+						<div style="margin-top:28rpx; margin-left: 8rpx; " v-if="chat.type == '7' ">
+						  <!--  <div class="dialogBox">	
+							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
+						</div> -->
+						
+							<div v-if="chat.simData.length>=5">
+						 <swiper
+						  :indicator-dots= true  
+						:interval='3000'
+						:duration='1000'
+						:circular='true'
+						style="height:500rpx;"
+								>
+							 <swiper-item  
+								v-for="(add,index) in chat.data" 
+								:key="index" 
+								>
+							<div v-for="(add1,index1) in add" :key="index" class="mapDetail">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">
+									{{add1.originStation}}--->{{add1.terminalStation}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:360rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.startTime}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.trainNo }}</div>
+							</div>
+                            </swiper-item>
+                              </swiper>
+						
+						</div>
+						<div v-else>
+								<div v-for="(add1,index1) in chat.simData" :key="index" class="mapDetail">	
+	                       <div style="float:left; margin-left:4vw; margin-top:1vh;">{{add1.list}}</div>
+						   <div style="margin-left: 8vw; float:left; max-height:70rpx">
+							    <span style="display:block;max-width:300rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:30rpx;">{{add1.originStation}}--->{{add1.terminalStation}}</span>
+							   <div style="margin-top:9rpx; max-width:200rpx; min-width: 0"  >
+								   <span style="display:block;max-width:330rpx;overflow:hidden;white-space:nowrap;text-overflow: ellipsis;font-size:20rpx;">{{add1.startTime}}</span>
+								   </div>
+						    </div>
+						   <div style=" margin-right: 4vw;float:right;font-size:18rpx;margin-top:2vh;">{{add1.trainNo }}</div>
 							</div>
 						</div>
 						
@@ -372,6 +467,9 @@
 							 this.innerAudioContext.play()
 								}
 						  })
+						   wx.showShareMenu({
+      withShareTicket: true
+    })
 		},
 		onUnload() {
 			this.pageNum = 1;
@@ -385,19 +483,13 @@
 				isVoicing: false, //控制正在说话的动画
 				//agreeShow: true,
 				videoShow: false, //控制视频可以
-				textData: {
-					visible: false, //控制显示文字答案弹窗
-					textCon: '',
-					detailImg: '',
-					refText: true
-				},
+			
 				chatBoxData: [],
 				//studyListRequests: [],
 				//askData: [],
 				pageNum: 1,
 				pageSize: 3,
 				total: '',
-				videoCompentSrc: '', //传给子组件的视频地址
 				bottomRequests: [],
 				//slectOneList: [],
 				//modelData: [],
@@ -443,7 +535,7 @@
 				 );
 				
 			},
-			toMap(item){				
+			/* toMap(item){				
 			this.map.latitude =item.latitude
 			this.map.longitude = item.longitude
 			this.map.address = item.address
@@ -458,7 +550,7 @@
 				url: 'plugin://routePlan/index?key=' + this.key+ '&referer=' + referer + '&endPoint=' + endPoint +'&navigation=1'
 			
 			})
-			},
+			}, */
 			toDial(code){
 				 wx.makePhoneCall({
              phoneNumber: code,
@@ -501,8 +593,10 @@
 					let content = JSON.parse(e.content)
 					let intent = content.intent //变成了data字段
 					console.log(intent)
-						 if(intent.operation == 'INSTRUCTION' || intent.operation == 'SET'){  //播放操作
-					    if(intent.hasOwnProperty('answer')){
+						
+
+						if(intent.service == 'train'){
+						if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
                                     type: 3,
                                     textDesc: intent.answer.text ,
@@ -517,10 +611,158 @@
 								}
 								that.pushData(tempObj)
 						}
-						return	
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })	
+				    let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 if(intent.hasOwnProperty('answer')){
+					 let tempObj = { 
+                                    type: 7,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+                                that.pushData(tempObj)
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 7,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+								console.log(tempObj)
+                                that.pushData(tempObj)
+						 }
 					}
-					
-					if(intent.service == 'app'){
+
+					if(intent.service == 'flight'){
+						if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })	
+				    let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 if(intent.hasOwnProperty('answer')){
+					 let tempObj = { 
+                                    type: 8,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+                                that.pushData(tempObj)
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 8,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+								console.log(tempObj)
+                                that.pushData(tempObj)
+						 }
+					}
+					if(intent.service == 'app'||
+					   intent.service == 'stock'||
+					   intent.service == 'story' ||
+					   intent.service == 'smartHome'||
+					   intent.service == 'all_smartHome'||
+					   intent.service == 'sceneInsurance'||
+					   intent.service == 'scenicSpots' ||
+					   intent.service == 'scheduleX'||
+					   intent.service == 'translation'||
+					   intent.service == 'radio'||
+					   intent.service == 'vehicleInfo'||
+					   intent.service == 'weather'||
+					   intent.service == 'warmTips'||
+					   intent.service == 'weixin'||
+					   intent.service == 'video'||
+					   intent.service == 'poetryGame'||
+					   intent.service == 'poetry'||
+					   intent.service == 'radio'||
+					   intent.service == 'photoView'||
+					   intent.service == 'personalName'||
+					   intent.service == 'playControl'||
+					   intent.service == 'ppersonalChat'||
+					   intent.service == 'oilprice'||
+					   intent.service == 'news'||
+					   intent.service == 'orderFood'||
+					   intent.service == 'musicGame'||
+					   intent.service == 'motorViolation'||
+					   intent.service == 'mixFunction'||
+					   intent.service == 'message'||
+					   intent.service == 'mediaControl'||
+					   intent.service == 'idiomGame'||
+					   intent.service == 'idiom'||
+					   intent.service == 'feedback'||
+					   intent.service == 'dataTransfer'||
+					   intent.service == 'datetimeX'||
+					   intent.service == 'coupletGame'||
+					   intent.service == 'carNumber'||
+					   intent.service == 'joke'||
+					   intent.service == 'help' ||
+					   intent.service == 'constellation'||
+					   intent.intent == 'cmd' ||
+					   intent.service == 'cmdControl' ||
+					   intent.service == 'changba' ||
+					   intent.service == 'carControlQA'||
+					   intent.service == 'carWash' ||
+					   intent.service == 'baike'||
+					   intent.service == 'carCare'||
+					   intent.service == 'animalCries'||
+					   intent.service == 'airControl'||
+					   intent.service == 'AIchannel'
+					){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
                                     type: 3,
@@ -528,6 +770,12 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								  TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 						} else{
 							const tempObj = { 
                                     type: 3,
@@ -535,9 +783,21 @@
 									intent:intent
 								}
 								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })						
 						}
 						return
 					}
+
+					
+                  
+					/**
+					 * 
+					 */
 					if(intent.service == 'chat' || intent.service == 'carControl'){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
@@ -566,18 +826,9 @@
 							that.pushData(tempObj1)
 							return
 					}
-					if(intent.service == 'weather'){
-						const tempObj = { 
-                                    type: 3,
-                                    textDesc: intent.answer.text,
-									intent:intent
-								}
-								that.pushData(tempObj)
-					}
+					
 
 					if(intent.service == 'mapU') {	
-						console.log('map')	
-						
 						if(intent.operation == 'POS_RANK'){
 							 let tempObj = { 
                                     type: 3,
@@ -617,7 +868,7 @@
 							}
 								},
 							fail: function(error) {
-							console.error(error)
+							//console.error(error)
 							data.forEach(e =>{
 								 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
 							})
@@ -628,7 +879,7 @@
                 for(var i=0,len=data.length;i<len;i+=5){
                      result.push(data.slice(i,i+5));
 				}
-						 console.log(result)
+						 //console.log(result)
 						 if(intent.hasOwnProperty('answer')){
 					 let tempObj = { 
                                     type: 4,
@@ -659,9 +910,15 @@
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
 									 console.log(album)
-									 program(album).then(res =>{
-										this.programer(res)
-									 })
+									//  program(album).then(res =>{
+									// 	this.programer(res)
+									//  })
+									 let tempObj = { //歌曲播放提示
+                                    type: 3,
+									textDesc: intent.answer.text,
+									intent:intent
+								}
+								that.pushData(tempObj)
 							
 									return
 								}
@@ -673,14 +930,14 @@
 								}
 								//console.log(tempObj)
                                 that.pushData(tempObj)
-                                let audioObj = {
-                                    type: 2,
-                                    audioSinger: intent.data.result[0].singerName, //歌手
-                                    audioSrc: intent.data.result[0].playUrl, //播放地址
-                                    audioPic: intent.data.result[0].picMin, //专辑图片
-                                    audioName: intent.data.result[0].songName, //歌名
-								}
-								that.pushData(audioObj)
+                                // let audioObj = {
+                                //     type: 2,
+                                //     audioSinger: intent.data.result[0].singerName, //歌手
+                                //     audioSrc: intent.data.result[0].playUrl, //播放地址
+                                //     audioPic: intent.data.result[0].picMin, //专辑图片
+                                //     audioName: intent.data.result[0].songName, //歌名
+								// }
+								// that.pushData(audioObj)
 								return
                             }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {
@@ -717,256 +974,6 @@
 		
 },
 
-			voiceAnswer(content) {
-				let that = this;
-				if(content.intent.rc == 0) {
-					let restult = content.intent.data.result;
-					let presentType = content.intent.data.present_type;
-					if(restult.length == 1) {
-						//只有一个答案的情况下
-						let paramFlag = restult[0].hasOwnProperty('param');
-						if(restult[0].sentences == "" && restult[0].image.length == 0 && restult[0].video.length == 0 && !paramFlag) {
-							//查看data数据中是否有结果，没结果查看answer
-							if(content.intent.answer.text) {
-								let tempObj = {
-									type: 3,
-									isDisAgree: 0,
-									isAgree: 0,
-									textDesc: content.intent.answer.text,
-									sid: content.intent.sid
-								}
-								if((tempObj.textDesc).length > 60) {
-									tempObj.isDetails = true; //显示详情
-								} else {
-									tempObj.isDetails = false;
-								}
-								that.pushData(tempObj);
-							} else {
-								let tempObj = {
-									type: 0,
-									isDisAgree: 0,
-									isAgree: 0,
-									text: '抱歉，没有找到对应的结果呢！我会继续努力学习的呢',
-									sid: content.intent.sid
-								}
-								that.pushData(tempObj);
-							}
-						} else if(presentType == '文字展示') {
-							let text = restult[0].sentences;
-							let tempObj = {
-								type: 3,
-								isDisAgree: 0,
-								isAgree: 0,
-								textDesc: text,
-								sid: content.intent.sid
-							}
-							if((tempObj.textDesc).length > 90) {
-								tempObj.isDetails = true; //显示详情
-							} else {
-								tempObj.isDetails = false;
-							}
-							that.pushData(tempObj);
-						} else if(presentType == '图文搭配') {
-							let txtData = restult[0].sentences.replace('<br>', '');
-							let tempObj = {
-								type: 4,
-								isDisAgree: 0,
-								isAgree: 0,
-								flag: 1, // 表示只有一个答案
-								imgSrc: restult[0].image,
-								data: [],
-								textDesc: restult[0].sentences,
-								txt: txtData,
-								sid: content.intent.sid
-							}
-							tempObj.isDetails = true; //显示详情
-							that.pushData(tempObj);
-						} else if(presentType == '视频展示') {
-							let tempObj = {
-								type: 5,
-								isDisAgree: 0,
-								isAgree: 0,
-								videoImgSrc: restult[0].image[0],
-								videoSrc: restult[0].video,
-								sid: content.intent.sid
-							}
-							that.pushData(tempObj);
-						} else if(presentType == '车型参数') {
-							let keyTemp = [];
-							let val = '';
-							let typeFlag;
-							let dataTemp = [];
-							let moreFlag = false;
-							for(let key in restult[0].param) {
-								let temValObj = {};
-								temValObj.val = restult[0].param[key];
-								temValObj.keyVal = key;
-								if(temValObj.val.length > 9) {
-									moreFlag = true;
-									temValObj.val = temValObj.val.substring(0, 8) + '...'
-								}
-								keyTemp.push(temValObj);
-							}
-							if(keyTemp.length > 8) {
-								moreFlag = true;
-								dataTemp = keyTemp.slice(0, 8);
-							} else {
-								dataTemp = keyTemp;
-							}
-							let tempObj = {
-								type: 11,
-								isDisAgree: 0,
-								isAgree: 0,
-								paramData: dataTemp,
-								isMore: moreFlag,
-								arr: restult[0].param,
-								sid: content.intent.sid
-							}
-							that.pushData(tempObj);
-						} else if(presentType == '配置亮点') {
-							let keyTemp = [];
-							let val = '';
-							let typeFlag;
-							let dataTemp = [];
-							let moreFlag = false;
-							for(let key in restult[0].param) {
-								let temValObj = {};
-								temValObj.val = restult[0].param[key];
-								temValObj.keyVal = key;
-								keyTemp.push(temValObj.keyVal);
-							}
-							if(keyTemp.length > 15) {
-								moreFlag = true;
-								dataTemp = keyTemp.slice(0, 15);
-							} else {
-								dataTemp = keyTemp;
-							}
-							let tempObj = {
-								type: 12,
-								isDisAgree: 0,
-								isAgree: 0,
-								paramData: dataTemp,
-								isMore: moreFlag,
-								arr: restult[0].param,
-								sid: content.intent.sid
-							}
-							that.pushData(tempObj);
-						} else {
-							//口碑查看
-							let keyTemp = [];
-							let val = '';
-							let typeFlag;
-							let moreFlag = false;
-							let dataTemp = [];
-							for(let key in restult[0].param) {
-								let temValObj = {};
-								temValObj.val = restult[0].param[key];
-								temValObj.keyVal = key;
-								keyTemp.push(temValObj.keyVal);
-							}
-							if(keyTemp.length > 15) {
-								moreFlag = true;
-								dataTemp = keyTemp.slice(0, 15);
-							} else {
-								dataTemp = keyTemp;
-							}
-							let tempObj = {
-								type: 13,
-								isDisAgree: 0,
-								isAgree: 0,
-								paramData: dataTemp,
-								isMore: moreFlag,
-								arr: restult[0].param,
-								sid: content.intent.sid
-							}
-							that.pushData(tempObj);
-						}
-					} else {
-						let moreData = restult;
-						let tempImgArr = [];
-						let tempTxt = [];
-						moreData.forEach(item => {
-							if(item.sentences.length != 0) {
-								tempTxt.push(item.sentences)
-							}
-							if(item.image.length != 0) {
-								tempImgArr.push(item)
-							}
-						})
-						//多答案的情况
-						if(presentType == '文字展示') {
-							let text = tempTxt[0];
-							let tempObj = {
-								type: 3,
-								isDisAgree: 0,
-								isAgree: 0,
-								flag: 2, // 表示只有多个答案
-								data: moreData, //多答案的结果
-								textDesc: text,
-								sid: content.intent.sid
-							}
-							if((tempObj.textDesc).length > 80) {
-								tempObj.isDetails = true; //显示详情
-							} else {
-								tempObj.isDetails = false;
-							}
-							//空调使用的答案是多答案，需要判断图片
-							that.pushData(tempObj);
-						} else if(presentType == '图文搭配') {
-							let txtTemp = tempImgArr[0].sentences.replace(/<(?!img).*?>/g, "");
-							let txtData = txtTemp.replace(/<(?!br).*?>/g, "");
-							let tempObj = {
-								type: 4,
-								isDisAgree: 0,
-								isAgree: 0,
-								flag: 2, // 表示只有多个答案
-								imgSrc: tempImgArr[0].image,
-								textDesc: tempImgArr[0].sentences,
-								data: moreData, //多答案的结果
-								txt: txtData,
-								sid: content.intent.sid
-							}
-							tempObj.isDetails = true; //显示详情
-							//空调使用的答案是多答案，需要判断图片
-							that.pushData(tempObj);
-						} else if(presentType == '视频展示') {
-							console.log('多视频展示')
-						} else if(presentType == '车型参数') {
-							console.log('多车型参数')
-						} else if(presentType == '配置亮点') {
-							console.log('多配置亮点')
-						} else {
-							//口碑查看
-							console.log('口碑查看')
-						}
-					}
-				} else if(content.intent.rc == 4) {
-					let noText;
-					if(content.intent.text == '抱歉，我还没有听清你的问题呢') {
-						noText = '抱歉，我还没有听清你的问题呢';
-						let tempObj = {
-							type: 0,
-							isDisAgree: 0,
-							isAgree: 0,
-							isDetails: 0,
-							text: noText,
-							sid: content.intent.sid
-						}
-						that.pushData(tempObj);
-					} else {
-						noText = "抱歉，没有找到你想要的答案，我会继续学习新技能的";
-						let tempObj = {
-							type: 3,
-							isDisAgree: 0,
-							isAgree: 0,
-							isDetails: 0,
-							textDesc: noText,
-							sid: content.intent.sid
-						}
-						that.pushData(tempObj);
-					}
-				}
-			},
 			//回答问题的接口
 			answerOperate(resData, type) {
 				let that = this;
@@ -1060,7 +1067,6 @@
 				 })
 					return
 				 } 
-
 				 that.enter(1, val.text)
 				 let intent = val.content.intent
 				
@@ -1094,6 +1100,124 @@
 						}
 						return	
 					}
+
+					if(intent.service == 'train'){
+						if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })	
+				    let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 if(intent.hasOwnProperty('answer')){
+					 let tempObj = { 
+                                    type: 7,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+                                that.pushData(tempObj)
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 7,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+								console.log(tempObj)
+                                that.pushData(tempObj)
+						 }
+					}
+
+					if(intent.service == 'flight'){
+						if(intent.hasOwnProperty('answer')){
+					    const tempObj = { 
+                                    type: 3,
+                                    textDesc: intent.answer.text ,
+									intent:intent
+								}
+								that.pushData(tempObj)
+						} else{
+							const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+						}
+				   let data = intent.data.result
+				   data.forEach((e,ind) =>{
+					   e.list = ind+1
+				   })	
+				    let result =[]
+                for(var i=0,len=data.length;i<len;i+=5){
+                     result.push(data.slice(i,i+5));
+				}
+						 if(intent.hasOwnProperty('answer')){
+					 let tempObj = { 
+                                    type: 8,
+                                    textDesc: intent.answer.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+                                that.pushData(tempObj)
+						  return
+						 } else{
+							  let tempObj = { 
+                                    type: 8,
+                                    textDesc: intent.text,
+									data:result,
+									simData:intent.data.result,
+									intent:intent
+								}
+								TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+								console.log(tempObj)
+                                that.pushData(tempObj)
+						 }
+					}
 					if(intent.rc == '4'){
 						 let tempObj = { 
                                     type: 3,
@@ -1110,7 +1234,57 @@
 					      return
 					}	
 					
-					if(intent.service == 'app'){
+					if(intent.service == 'app'||
+					   intent.service == 'stock'||
+					   intent.service == 'story' ||
+					   intent.service == 'smartHome'||
+					   intent.service == 'all_smartHome'||
+					   intent.service == 'sceneInsurance'||
+					   intent.service == 'scenicSpots' ||
+					   intent.service == 'scheduleX'||
+					   intent.service == 'translation'||
+					   intent.service == 'radio'||
+					   intent.service == 'vehicleInfo'||
+					   intent.service == 'weather'||
+					   intent.service == 'warmTips'||
+					   intent.service == 'weixin'||
+					   intent.service == 'video'||
+					   intent.service == 'poetryGame'||
+					   intent.service == 'poetry'||
+					   intent.service == 'radio'||
+					   intent.service == 'photoView'||
+					   intent.service == 'personalName'||
+					   intent.service == 'playControl'||
+					   intent.service == 'ppersonalChat'||
+					   intent.service == 'oilprice'||
+					   intent.service == 'news'||
+					   intent.service == 'orderFood'||
+					   intent.service == 'musicGame'||
+					   intent.service == 'motorViolation'||
+					   intent.service == 'mixFunction'||
+					   intent.service == 'message'||
+					   intent.service == 'mediaControl'||
+					   intent.service == 'idiomGame'||
+					   intent.service == 'idiom'||
+					   intent.service == 'feedback'||
+					   intent.service == 'dataTransfer'||
+					   intent.service == 'datetimeX'||
+					   intent.service == 'coupletGame'||
+					   intent.service == 'carNumber'||
+					   intent.service == 'joke'||
+					   intent.service == 'help' ||
+					   intent.service == 'constellation'||
+					   intent.intent == 'cmd' ||
+					   intent.service == 'cmdControl' ||
+					   intent.service == 'changba' ||
+					   intent.service == 'carControlQA'||
+					   intent.service == 'carWash' ||
+					   intent.service == 'baike'||
+					   intent.service == 'carCare'||
+					   intent.service == 'animalCries'||
+					   intent.service == 'airControl'||
+					   intent.service == 'AIchannel'
+					){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
                                     type: 3,
@@ -1187,28 +1361,14 @@
 							},500)
 							return
 					}
-					if(intent.service == 'weather'){
-						const tempObj = { 
-                                    type: 3,
-                                    textDesc: intent.answer.text,
-									intent:intent
-								}
-							 TTS(intent.answer.text).then(res =>{
-								if (res.statusCode === 200) {										 
-					         this.innerAudioContext.src = res.data.data
-							 this.innerAudioContext.play()
-								}
-						  })			
-								that.pushData(tempObj)
-					}
+					
 
 					if(intent.service == 'mapU') {	
-						console.log('map')	
-						
-						if(intent.operation == 'POS_RANK'){
+
+						if(intent.operation == 'POS_RANK' || intent.operation == 'USR_POI_QUERY'){
 							 let tempObj = { 
                                     type: 3,
-                                    textDesc: intent.text,
+                                    textDesc: '已为你实现相关操作' ,
 									intent:intent
                                 }
 								that.pushData(tempObj)
@@ -1250,7 +1410,6 @@
 							}
 								},
 							fail: function(error) {
-							console.error(error)
 							data.forEach(e =>{
 								 e.distance = e.distance >1000 ? (e.distance/1000).toFixed(1) +'公里' : e.distance +'米'
 							})
@@ -1261,7 +1420,7 @@
                 for(var i=0,len=data.length;i<len;i+=5){
                      result.push(data.slice(i,i+5));
 				}
-						 console.log(result)
+						 //console.log(result)
 					 if(intent.hasOwnProperty('answer')){
 					 let tempObj = { 
                                     type: 4,
@@ -1304,10 +1463,16 @@
                             if (intent.answer.text && intent.type != 'NULL' ){
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
-									 console.log(album)
-									 program(album).then(res =>{
-										this.programer(res)
-									 })
+									// console.log(album)
+									//  program(album).then(res =>{
+									// 	this.programer(res)
+									//  })
+									let tempObj = { //歌曲播放提示
+                                    type: 3,
+									textDesc: intent.answer.text,
+									intent:intent
+								}
+									that.pushData(tempObj)
 							
 									return
 								}
@@ -1326,16 +1491,16 @@
 						  })
 							
 				 
-								console.log(tempObj)
+								//console.log(tempObj)
                                 that.pushData(tempObj)
-                                let audioObj = {
-                                    type: 2,
-                                    audioSinger: intent.data.result[0].singerName, //歌手
-                                    audioSrc: intent.data.result[0].playUrl, //播放地址
-                                    audioPic: intent.data.result[0].picMin, //专辑图片
-                                    audioName: intent.data.result[0].songName, //歌名
-								}
-								that.pushData(audioObj)
+                                // let audioObj = {
+                                //     type: 2,
+                                //     audioSinger: intent.data.result[0].singerName, //歌手
+                                //     audioSrc: intent.data.result[0].playUrl, //播放地址
+                                //     audioPic: intent.data.result[0].picMin, //专辑图片
+                                //     audioName: intent.data.result[0].songName, //歌名
+								// }
+								// that.pushData(audioObj)
 								return
                             }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {

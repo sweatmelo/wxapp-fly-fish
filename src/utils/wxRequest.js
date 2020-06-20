@@ -13,7 +13,7 @@ const RESULT_LEVEL = 'complete'
     let paramBase64 = new Buffer(param).toString('base64');
 	let X_CurTime = Math.floor(Date.now()/1000);
     let checkSum = md5(API_KEY +X_CurTime +paramBase64);
-	console.log(checkSum)
+	//console.log(checkSum)
 	
 	return new Promise((resolve, reject) => {
 		wx.request({
