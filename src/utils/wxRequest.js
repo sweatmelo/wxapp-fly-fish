@@ -1,3 +1,4 @@
+import store from '../store'
 let md5 = require('md5-node');
 import { formatNavigateTo,hex_sha1,sha1} from "@/utils/index"
 const URL = 'https://openapi.xfyun.cn/v2/aiui'
@@ -6,6 +7,7 @@ const API_KEY = '9b2092171fa9c2bac40025784016bef0'
 const AUTH_ID = '4445f41e175bf2f3c699edf706884767'
 const SCENE = 'main'
 export function answerTextz( data) {
+	console.log(store.state.current.index)
 const DATA_TYPE = 'text'
 const RESULT_LEVEL = 'complete'
 
@@ -38,7 +40,7 @@ const RESULT_LEVEL = 'complete'
 }
 
 	export function Voice(data)  {
-
+		
 		const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/file'
 			return new Promise((resolve, reject) => {
 				 wx.uploadFile({
@@ -49,6 +51,11 @@ const RESULT_LEVEL = 'complete'
 						openId: 'gzcui',
 						auth_id: 'gzcui',
 						data_type: 'audio',
+						//language: 'zh_cn',
+						//accent: 'cantonese'
+						 user_defined_params:{
+						 	wakeup:'true'}
+						//wakeup: 'true'	
 					},
 					success: function(res) {
 						resolve(res.data)
@@ -81,7 +88,7 @@ const RESULT_LEVEL = 'complete'
 				resolve(res)
 			},
 			fail: function(err){
-				 			reject(err)
+				reject(err)
 			}
 			 
 		 })

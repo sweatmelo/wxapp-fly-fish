@@ -1,16 +1,22 @@
 <template>
     <div class="head">
-         <img src="/static/img/head.png" > 
+         <image src="/static/img/head.png" @click="to" > </image>
+        
         <div class="title">飞鱼语音助理</div>
     </div>
 </template>
 <script>
-import { formatNavigateTo,hex_sha1,sha1} from "@/utils/index"
+
 import { Text,TTS } from "@/utils/wxRequest.js"
 import { request } from "@/utils/wxRequest.js"
+import iButton from 'iview-mpvue/dist/components/button/button'
 
 
 export default {
+
+    components:{
+        'i-button':iButton
+    },
     methods: {
         tomap (){
           
@@ -18,6 +24,13 @@ export default {
 					"/pages/map/main" 
 				)
            
+        },
+        toggleLeft1(){
+            this.$emit("toggleLeft1")
+        },
+        to(){
+           this.$emit("ToggleLeft1")
+           console.log(this)
         }
     },
     mounted() { 
@@ -46,7 +59,7 @@ export default {
     justify-content: left;
     border: 1px solid rgba(4, 4, 20, 0.356);
 
-    img{
+    image{
         position:absolute;
         top: 1vh;
         left:20rpx;

@@ -23,6 +23,7 @@
     "build": "node build/build.js wx"
   },
   "dependencies": {
+    "iview-mpvue": "^1.0.6",
     "js-md5": "^0.7.3",
     "md5-node": "^1.0.1",
     "mpvue": "^2.0.0",

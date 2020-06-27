@@ -1,14 +1,47 @@
 <template>
 	<div class="home-contaniner">
-		<!--录音模态框-->
 		 <record-voice v-if="isVoicing"></record-voice> 
+
 		<div class="home-chat">
 			<div class="iconheadBox">
-				<head-detail></head-detail>				
+				<!-- <head-detail></head-detail>	 -->
+				 <div class="head">
+					 <i-button   i-class="view-button" >
+						 <image src="/static/img/2.png"  class="image" > </image>
+					 </i-button>
+         
+        
+        <div class="title">飞鱼语音助理</div>
+                 </div>			
 			</div>
+	 
 			<div class="home-content">
 			<scroll-view scroll-y="true" :style="{'height':isIphoneX ? 'calc(100vh - 270rpx)':'calc(100vh - 235rpx)'}" class="scrollWidth" :scroll-into-view="toView" @scrolltolower="toView = ''">
+				<!--录音模态框-->
+		 <i-drawer mode="left" :visible="showLeft1" :mask-closable="false" >
+			 <div style="position: absolute; top:-47vh; width:50vw"><i-button v-on:click="ToggleLeft1" type="info">关闭</i-button></div>
+			<div style="position: absolute; top:-33vh; width:50vw" >
+				 <i-collapse >
+        <i-collapse-item title="方言选择">
+			<div slot="content">
+              <i-panel >
+    <i-radio-group @change="handleFruitChange" :current="current" :groups="fruit" :position="position"></i-radio-group>
+             </i-panel> 
+			 
+			</div>
+        </i-collapse-item>
+    </i-collapse>
+			
+			 </div>
+			  <div style="position: absolute; display:flex;  justify-content: space-between;top:-39vh; width:60vw">
+		        <label style="font-size:35rpx">单说模式</label>
+                <switch :checked="switch1" @change="switch1Change" color="#2DB7F5"/>
+            
+      
+			  </div>
+       </i-drawer>
 
+	
 					<div class="chat-box" v-for="(chat,ind) in chatBoxData" :key="ind">
 						<!--文字输入问题显示-->
 						<div class="text-input-column column" v-if="chat.type == '1'">
@@ -441,6 +474,16 @@
 	import {answerTextz,program,TTS} from "@/utils/wxRequest"
 	import { formatNavigateTo } from "@/utils/index"
 	import headDetail from "@/components/head"
+	import iButton from 'iview-mpvue/dist/components/button/button'
+	import iDrawer from 'iview-mpvue/dist/components/drawer/drawer'
+	import iRadioGroup from 'iview-mpvue/dist/components/radio-group/radio-group'
+	import iCollapse from 'iview-mpvue/dist/components/collapse/collapse'
+	import iCollapseItem from 'iview-mpvue/dist/components/collapse-item/collapse-item'
+	import iSwitch from 'iview-mpvue/dist/components/switch/switch'
+  
+
+	
+    
 	
 	let currentAudioSrc = {};
 	let audioContextSrc = {};
@@ -452,8 +495,7 @@
 		 let qqmapsdk = new QQMapWX({
 						key: '6LEBZ-N2BRK-SJTJH-AJZ6E-VVMIK-FEBXD'
 					})
-     // properties(Read only)(duration,currentTime,paused,buffered,volume)
-	 // properties(src,startTime,autoplay,loop,obeyMuteSwitch)
+  
 	 
 	export default {
 		onLoad() {
@@ -461,12 +503,12 @@
 				{type: 3,
 				textDesc: '你好，很高兴见到你。你可以使用文本或者语音跟我对话~'
 			}]
-			 TTS('你好，很高兴见到你。你可以使用文本或者语音跟我对话~').then(res =>{
-								if (res.statusCode === 200) {										 
-					         this.innerAudioContext.src = res.data.data
-							 this.innerAudioContext.play()
-								}
-						  })
+			//  TTS('你好，很高兴见到你。你可以使用文本或者语音跟我对话~').then(res =>{
+			// 					if (res.statusCode === 200) {										 
+			// 		         this.innerAudioContext.src = res.data.data
+			// 				 this.innerAudioContext.play()
+			// 					}
+			// 			  })
 						   wx.showShareMenu({
       withShareTicket: true
     })
@@ -483,20 +525,29 @@
 				isVoicing: false, //控制正在说话的动画
 				//agreeShow: true,
 				videoShow: false, //控制视频可以
-			
-				chatBoxData: [],
-				//studyListRequests: [],
-				//askData: [],
+		
+				chatBoxData: [],			
 				pageNum: 1,
 				pageSize: 3,
 				total: '',
-				bottomRequests: [],
-				//slectOneList: [],
-				//modelData: [],
+				bottomRequests: [],			
 				map: {},
 				latitude: '',
 				longitude: '',
-				innerAudioContext:''
+				innerAudioContext:'',
+				showLeft1: false,
+				switch1:true,
+				 fruit: [{
+                    id: 1,
+                    value: '普通话'
+                }, {
+                    id: 2,
+                    value: '四川话'
+                }, {
+                    id: 3,
+                    value: '粤语'
+				}],
+				current:'四川话'
 			}
 		},
 		mounted() {
@@ -516,17 +567,40 @@
 						}
 						})
 			this.innerAudioContext= wx.createInnerAudioContext();
+			console.log(this.$store.state.current.index)
+			
 		},
 		components: {
 			recordVoice,	
 			footComponent,
 			headDetail,
+			'i-button': iButton,
+			 'i-drawer': iDrawer,
+			 'i-radio-group': iRadioGroup,
+			 'i-collapse': iCollapse,
+			 'i-collapse-item': iCollapseItem,
+			 'i-switch': iSwitch
+			 
 		},
 	
 	  created() {
 		    
 	  },
 		methods: {
+			switch1Change(){
+				this.switch1 = !this.switch1
+				console.log(this.switch1)
+			},
+			handleFruitChange(evt) {
+			  this.current = evt.value
+			  console.log(this.current)
+            },
+            handleClick() {
+              this.position = this.position === 'left' ? 'right' : 'left'
+            },
+			ToggleLeft1() {
+                this.showLeft1 = !this.showLeft1
+			},
 			detail(intent){
 				wx.setStorageSync('intent', intent)
 				
@@ -1616,6 +1690,35 @@
 		background: #F8FAFF;
 		//background: #78FA55;
 	}
+
+	.view-button{
+		width: 100rpx;
+		height: 100rpx;
+		border: none;
+	}
+	.head{
+    width: 100%;
+    height: 8vh;
+    position: relative;
+    display: flex;
+    justify-content: left;
+	border: 1px solid rgba(4, 4, 20, 0.356);
+	}
+
+    .image{
+        position:absolute;
+        top: 1vh;
+        left:20rpx;
+        width: 75rpx;
+        height: 75rpx;
+    }
+
+    .title{
+        position:absolute;
+		margin-left: 150rpx;
+		margin-top:2vh
+    }
+
 
      .iconheadBox {
 		position: relative;
