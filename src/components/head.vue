@@ -43,6 +43,10 @@ export default {
         //   })
 
           //innerAudioContext.src =
+
+          Text('你好').then( res=>{
+              console.log(res)
+          })
     }
    
 }

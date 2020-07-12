@@ -1,6 +1,7 @@
 const state ={
     current:{
-        index:1
+        accent:'main',
+        ds:false
     }
 }
 export default state

@@ -3,57 +3,67 @@
 		 <record-voice v-if="isVoicing"></record-voice> 
 
 		<div class="home-chat">
-			<div class="iconheadBox">
+			<!-- 头部 -->
+			<div class="iconheadBox"> 
 				<!-- <head-detail></head-detail>	 -->
 				 <div class="head">
-					 <i-button   i-class="view-button" >
+					 <i-button   i-class="view-button"  @click="ToggleLeft1" >
 						 <image src="/static/img/2.png"  class="image" > </image>
 					 </i-button>
-         
-        
         <div class="title">飞鱼语音助理</div>
                  </div>			
 			</div>
-	 
+	 			<!-- 中间部分 -->
 			<div class="home-content">
 			<scroll-view scroll-y="true" :style="{'height':isIphoneX ? 'calc(100vh - 270rpx)':'calc(100vh - 235rpx)'}" class="scrollWidth" :scroll-into-view="toView" @scrolltolower="toView = ''">
-				<!--录音模态框-->
+				<!-- 抽屉 -->
 		 <i-drawer mode="left" :visible="showLeft1" :mask-closable="false" >
-			 <div style="position: absolute; top:-47vh; width:50vw"><i-button v-on:click="ToggleLeft1" type="info">关闭</i-button></div>
-			<div style="position: absolute; top:-33vh; width:50vw" >
-				 <i-collapse >
-        <i-collapse-item title="方言选择">
-			<div slot="content">
-              <i-panel >
+			 <div style="position: absolute; top:-47vh; width:50vw">
+				 <i-button v-on:click="ToggleLeft1" type="info">关闭</i-button>
+			 </div>
+			 <div style="position:absolute;  top:-36vh; left:5vw;font-size:33rpx; width:50vw"> 设置</div>
+			<div style="position: absolute; top:-32vh; width:50vw" >	
+	<div class="caption-wrap">
+    
+    <i-collapse :name="name">
+        <i-collapse-item title="方言" name="name1">
+            <div slot="content">
+                 <i-panel >
     <i-radio-group @change="handleFruitChange" :current="current" :groups="fruit" :position="position"></i-radio-group>
              </i-panel> 
-			 
-			</div>
+            </div>
         </i-collapse-item>
-    </i-collapse>
-			
-			 </div>
-			  <div style="position: absolute; display:flex;  justify-content: space-between;top:-39vh; width:60vw">
+        <i-collapse-item title="单说模式" name="name2">
+            <div slot="content" >
+                 <div style=" display:flex;  justify-content: space-between;">
 		        <label style="font-size:35rpx">单说模式</label>
                 <switch :checked="switch1" @change="switch1Change" color="#2DB7F5"/>
-            
-      
 			  </div>
+            </div>
+        </i-collapse-item>
+        
+    </i-collapse>
+</div>
+				
+			</div>
+
        </i-drawer>
 
 	
 					<div class="chat-box" v-for="(chat,ind) in chatBoxData" :key="ind">
 						<!--文字输入问题显示-->
 						<div class="text-input-column column" v-if="chat.type == '1'">
+							<img src="/static/img/client.png" style="float:right; width:100rpx;height:100rpx">
 							<div class="v_me">{{chat.text}}</div>
 						</div>
 
-						<!-- <div class="audioPage" v-if="chat.type == '2' ">
+						 <div class="audioPage" v-if="chat.type == '2' ">
 						<audio :src="chat.audioSrc" :author="chat.audioSinger" :name="chat.audioName" id="'audio'+ind " :poster="chat.audioPic" controls=true></audio> 
-						</div> -->
+						</div> 
 						
      
-						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '3'">
+						<div style="margin-top: 68rpx; margin-left: 8rpx" v-if="chat.type == '3'">
+							<img src="/static/img/xf.png" style="float:left; width:100rpx;height:100rpx;margin-top:-50rpx">
 							<div class="dialogBox" @click="detail(chat.intent)">	
 							<p class="titleAnswer" >{{chat.textDesc}}</p>
 						</div>
@@ -61,6 +71,7 @@
 
 						
 						<div style="margin-top: 28rpx; margin-left: 8rpx" v-if="chat.type == '5'">
+							<img src="/static/img/xf.png" style="float:left; width:100rpx;height:100rpx;margin-top:-50rpx">
 							<div class="dialogBoxDial">	
 							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}} </p>
 							<div style="float:right;margin-top:10rpx; margin-right:20rpx;">
@@ -70,6 +81,7 @@
 						</div>
                            
 						<div style="margin-top:28rpx; margin-left: 8rpx; " v-if="chat.type == '4' ">
+							<img src="/static/img/xf.png" style="float:left; width:100rpx;height:100rpx;margin-top:-50rpx">
 						   <div class="dialogBox">	
 							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
 						</div>
@@ -117,9 +129,7 @@
 
 
 						<div style="margin-top:28rpx; margin-left: 8rpx; " v-if="chat.type == '8' ">
-						  <!--  <div class="dialogBox">	
-							<p class="titleAnswer" @click="detail(chat.intent)">{{chat.textDesc}}</p>
-						</div> -->
+						 
 						
 							<div v-if="chat.simData.length>=5">
 						 <swiper
@@ -471,7 +481,7 @@
 <script>
 	import recordVoice from "@/components/recording"	
 	import footComponent from "@/components/footer"
-	import {answerTextz,program,TTS} from "@/utils/wxRequest"
+	import {answerTextz,program,TTS,Text} from "@/utils/wxRequest"
 	import { formatNavigateTo } from "@/utils/index"
 	import headDetail from "@/components/head"
 	import iButton from 'iview-mpvue/dist/components/button/button'
@@ -524,19 +534,15 @@
 				toView: 'bottom0',
 				isVoicing: false, //控制正在说话的动画
 				//agreeShow: true,
-				videoShow: false, //控制视频可以
-		
-				chatBoxData: [],			
-				pageNum: 1,
-				pageSize: 3,
-				total: '',
+				videoShow: false, //控制视频可以		
+				chatBoxData: [],					
 				bottomRequests: [],			
 				map: {},
 				latitude: '',
 				longitude: '',
 				innerAudioContext:'',
 				showLeft1: false,
-				switch1:true,
+				switch1:false,
 				 fruit: [{
                     id: 1,
                     value: '普通话'
@@ -547,7 +553,7 @@
                     id: 3,
                     value: '粤语'
 				}],
-				current:'四川话'
+				current:'普通话'
 			}
 		},
 		mounted() {
@@ -567,7 +573,7 @@
 						}
 						})
 			this.innerAudioContext= wx.createInnerAudioContext();
-			console.log(this.$store.state.current.index)
+			
 			
 		},
 		components: {
@@ -587,17 +593,26 @@
 		    
 	  },
 		methods: {
+				
 			switch1Change(){
 				this.switch1 = !this.switch1
-				console.log(this.switch1)
+				this.$store.commit('dsSwitch')
+				console.log(this.$store.state.current.ds)
 			},
 			handleFruitChange(evt) {
 			  this.current = evt.value
+			  if(this.current == '粤语'){
+				  this.$store.commit('MODEL_CONFIG','cantonese')
+			  }
+			  if(this.current == '四川话'){
+				  this.$store.commit('MODEL_CONFIG','lmz')
+			  }
+			  if(this.current == '普通话'){
+				  this.$store.commit('MODEL_CONFIG','main')
+			  }
 			  console.log(this.current)
             },
-            handleClick() {
-              this.position = this.position === 'left' ? 'right' : 'left'
-            },
+            
 			ToggleLeft1() {
                 this.showLeft1 = !this.showLeft1
 			},
@@ -626,12 +641,20 @@
 			})
 			}, */
 			toDial(code){
+				if(!code){
+					 wx.showModal({
+				title: '提示',
+				content: '没有找到可拨打的号码',
+				
+				})
+				}
 				 wx.makePhoneCall({
              phoneNumber: code,
              })
 			},
 			recordStart() {	
 			this.isVoicing = true;
+			this.innerAudioContext.stop()
 			},
 			recordEnd() {
 				this.isVoicing = false;		
@@ -805,7 +828,7 @@
 					   intent.service == 'poetry'||
 					   intent.service == 'radio'||
 					   intent.service == 'photoView'||
-					   intent.service == 'personalName'||
+					   //intent.service == 'personalName'||
 					   intent.service == 'playControl'||
 					   intent.service == 'ppersonalChat'||
 					   intent.service == 'oilprice'||
@@ -835,7 +858,8 @@
 					   intent.service == 'carCare'||
 					   intent.service == 'animalCries'||
 					   intent.service == 'airControl'||
-					   intent.service == 'AIchannel'
+					   intent.service == 'AIchannel'||
+					   intent.service == 'chat'
 					){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
@@ -866,31 +890,12 @@
 						}
 						return
 					}
-
-					
                   
 					/**
 					 * 
 					 */
-					if(intent.service == 'chat' || intent.service == 'carControl'){
-						 if(intent.hasOwnProperty('answer')){
-					    const tempObj = { 
-                                    type: 3,
-                                    textDesc: intent.answer.text ,
-									intent:intent
-								}
-								that.pushData(tempObj)
-						} else{
-							const tempObj = { 
-                                    type: 3,
-                                    textDesc: '已为你实现相关操作',
-									intent:intent
-								}
-								that.pushData(tempObj)
-						}
-						return
-					}	
-					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
+					
+					if(intent.service == 'telephone'){ //拨号
 						   let tempObj1 = {
 										type: 5,
 										textDesc: intent.answer.text,
@@ -912,6 +917,22 @@
 								that.pushData(tempObj)
 					      return
 						}
+						if(!intent.hasOwnProperty('data')){
+
+								const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						})
+						}
+							
 				   let data = intent.data.result
 				   data.forEach((e,ind) =>{
 					   e.list = ind+1
@@ -978,9 +999,11 @@
 					}
 				
 				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
-						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
+						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') ||
+						 intent.data.result[0].hasOwnProperty('playUrl') )) {
 							console.log('qwe')
-                            if (intent.answer.text && intent.type != 'NULL' ){
+                            if (intent.hasOwnProperty('answer') ){
+								console.log('1122')
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
 									 console.log(album)
@@ -1002,35 +1025,49 @@
 									textDesc: intent.answer.text,
 									intent:intent
 								}
-								//console.log(tempObj)
-                                that.pushData(tempObj)
-                                // let audioObj = {
-                                //     type: 2,
-                                //     audioSinger: intent.data.result[0].singerName, //歌手
-                                //     audioSrc: intent.data.result[0].playUrl, //播放地址
-                                //     audioPic: intent.data.result[0].picMin, //专辑图片
-                                //     audioName: intent.data.result[0].songName, //歌名
-								// }
-								// that.pushData(audioObj)
-								return
-                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
-                                let tempObj = {
-                                    type: 3,
-									textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
-									intent:intent
-                                }
 								that.pushData(tempObj)
+								 let audioObj = {
+                                     type: 2,
+                                     audioSinger: intent.data.result[0].singerName, //歌手
+                                     audioSrc: intent.data.result[0].playUrl, //播放地址
+                                     audioPic: intent.data.result[0].picMin, //专辑图片
+                                     audioName: intent.data.result[0].songName, //歌名
+								 }
+								 that.pushData(audioObj)
+                               
 								return
-                            }
-						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
-							 
+                            } 	else {
+										console.log('11')
 			 						let tempObj1 = {
 										type: 3,
-										textDesc: intent.answer.text,
+										textDesc: '已为您实现相关操作' ,
 										intent:intent
 									 }
 								that.pushData(tempObj1)
-						} 	
+									TTS('已为您实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+						} if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
+                                let tempObj = {
+                                    type: 3,
+									textDesc:  '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+									intent:intent
+                                }
+								that.pushData(tempObj)
+								TTS('抱歉我没有找到对应的结果呢！我会继续努力学习的呢').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
+								return
+							}
+						
+						}  
+						
 					if(intent.rc == '4'){
 						 let tempObj = { 
                                     type: 3,
@@ -1038,6 +1075,12 @@
 									intent:intent
                                 }
 								that.pushData(tempObj)
+									TTS(intent.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 					      return
 					}	
 					
@@ -1055,7 +1098,7 @@
 				 if(type == 'voice') {
 					that.voiceAnswer(resData);
 				} else {
-					//文本输入框获取答案
+					
 					that.txtAnswer(resData);
 				}
 			},
@@ -1191,6 +1234,7 @@
 								}
 								that.pushData(tempObj)
 						}
+						
 				   let data = intent.data.result
 				   data.forEach((e,ind) =>{
 					   e.list = ind+1
@@ -1357,7 +1401,8 @@
 					   intent.service == 'carCare'||
 					   intent.service == 'animalCries'||
 					   intent.service == 'airControl'||
-					   intent.service == 'AIchannel'
+					   intent.service == 'AIchannel'||
+					   intent.service == 'chat'
 					){
 						 if(intent.hasOwnProperty('answer')){
 					    const tempObj = { 
@@ -1388,38 +1433,8 @@
 						}
 						return
 					}
-					if(intent.service == 'chat' || intent.service == 'carControl'){
-						 if(intent.hasOwnProperty('answer')){
-					    const tempObj = { 
-                                    type: 3,
-                                    textDesc: intent.answer.text ,
-									intent:intent
-								}
-								that.pushData(tempObj)
-								 TTS(intent.answer.text).then(res =>{
-								if (res.statusCode === 200) {										 
-					         this.innerAudioContext.src = res.data.data
-							 this.innerAudioContext.play()
-								}
-						  })			
-							   
-						} else{
-							const tempObj = { 
-                                    type: 3,
-                                    textDesc: '已为你实现相关操作',
-									intent:intent
-								}
-								that.pushData(tempObj)
-								 TTS('已为你实现相关操作').then(res =>{
-								if (res.statusCode === 200) {										 
-					         this.innerAudioContext.src = res.data.data
-							 this.innerAudioContext.play()
-								}
-						  })			
-						}
-						return
-					}	
-					if(intent.rc == 3 && intent.service == 'telephone'){ //拨号
+					
+					if(intent.service == 'telephone'){ //拨号
 						   let tempObj1 = {
 										type: 5,
 										textDesc: intent.answer.text,
@@ -1453,6 +1468,22 @@
 								}
 						  })			
 					      return
+						}
+						if(!intent.hasOwnProperty('data')){
+
+								const tempObj = { 
+                                    type: 3,
+                                    textDesc: '已为你实现相关操作',
+									intent:intent
+								}
+								that.pushData(tempObj)
+								 TTS('已为你实现相关操作').then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						})
+						return
 						}
 				   let data = intent.data.result
 				   data.forEach((e,ind) =>{
@@ -1531,22 +1562,30 @@
 					      return
 					}
 				
-				    if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
-						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') || intent.data.result[0].hasOwnProperty('playUrl') )) {
-							//console.log('qwe')
-                            if (intent.answer.text && intent.type != 'NULL' ){
+				   if (intent.rc == 0 && (intent.semantic.slots.hasOwnProperty('song') ||intent.semantic.slots.hasOwnProperty('artist')
+						|| intent.semantic.slots.hasOwnProperty('genre') || intent.semantic.slots.hasOwnProperty('tags') ||
+						 intent.data.result[0].hasOwnProperty('playUrl') )) {
+							console.log('qwe')
+                            if (intent.hasOwnProperty('answer') ){
+								console.log('1122')
 								 if(intent.semantic.slots.hasOwnProperty('presenter')){  //节目相声
 									 let album = intent.data.result[0].albumId //节目相声
-									// console.log(album)
+									 console.log(album)
 									//  program(album).then(res =>{
 									// 	this.programer(res)
 									//  })
-									let tempObj = { //歌曲播放提示
+									 let tempObj = { //歌曲播放提示
                                     type: 3,
 									textDesc: intent.answer.text,
 									intent:intent
 								}
-									that.pushData(tempObj)
+								that.pushData(tempObj)
+								TTS(intent.answer.text).then(res =>{
+								if (res.statusCode === 200) {										 
+					         this.innerAudioContext.src = res.data.data
+							 this.innerAudioContext.play()
+								}
+						  })
 							
 									return
 								}
@@ -1556,57 +1595,49 @@
 									textDesc: intent.answer.text,
 									intent:intent
 								}
-								
-									 TTS(intent.answer.text).then(res =>{
+								that.pushData(tempObj)
+								  
+                                 let audioObj = {
+                                     type: 2,
+                                     audioSinger: intent.data.result[0].singerName, //歌手
+                                     audioSrc: intent.data.result[0].playUrl, 
+                                     audioPic: intent.data.result[0].picMin, //专辑图片
+                                     audioName: intent.data.result[0].songName, //歌名
+								 }
+								 that.pushData(audioObj)
+                               
+								return
+                            } 	else {
+										console.log('11')
+			 						let tempObj1 = {
+										type: 3,
+										textDesc: '已为您实现相关操作' ,
+										intent:intent
+									 }
+								that.pushData(tempObj1)
+									TTS('已为您实现相关操作').then(res =>{
 								if (res.statusCode === 200) {										 
 					         this.innerAudioContext.src = res.data.data
 							 this.innerAudioContext.play()
 								}
 						  })
-							
-				 
-								//console.log(tempObj)
-                                that.pushData(tempObj)
-                                // let audioObj = {
-                                //     type: 2,
-                                //     audioSinger: intent.data.result[0].singerName, //歌手
-                                //     audioSrc: intent.data.result[0].playUrl, //播放地址
-                                //     audioPic: intent.data.result[0].picMin, //专辑图片
-                                //     audioName: intent.data.result[0].songName, //歌名
-								// }
-								// that.pushData(audioObj)
-								return
-                            }  else if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
+						} if( intent.answer.type == 'NULL' && intent.hasOwnProperty('semantic')) {
                                 let tempObj = {
                                     type: 3,
-									textDesc: intent.answer.text ? intent.answer.text : '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
+									textDesc:  '抱歉我没有找到对应的结果呢！我会继续努力学习的呢',
 									intent:intent
                                 }
 								that.pushData(tempObj)
-							     TTS(intent.answer.text).then(res =>{
+								TTS('抱歉我没有找到对应的结果呢！我会继续努力学习的呢').then(res =>{
 								if (res.statusCode === 200) {										 
 					         this.innerAudioContext.src = res.data.data
 							 this.innerAudioContext.play()
 								}
 						  })
 								return
-                            }
-						}  else if(intent.rc == 3  && intent.hasOwnProperty('semantic') ){
-							 
-			 						let tempObj1 = {
-										type: 3,
-										textDesc: intent.answer.text,
-										intent:intent
-									 }
-									 TTS(intent.answer.text).then(res =>{
-								if (res.statusCode === 200) {										 
-					         this.innerAudioContext.src = res.data.data
-							 this.innerAudioContext.play()
-								}
-						  })
-									 
-								that.pushData(tempObj1)
-						} 
+							}
+						
+						}  
 				} 
 				
 			},
@@ -1687,7 +1718,7 @@
 	.home-contaniner {
 		height: 100vh;
 		position: relative;
-		background: #F8FAFF;
+		background: #FFFFFF;
 		//background: #78FA55;
 	}
 
@@ -1701,7 +1732,7 @@
     height: 8vh;
     position: relative;
     display: flex;
-    justify-content: left;
+	justify-content: left;
 	border: 1px solid rgba(4, 4, 20, 0.356);
 	}
 
@@ -1728,6 +1759,7 @@
 	.home-content{
 		position: relative;
 		 height: 82vh;
+		 margin-top:3rpx;
 		
 	}
 
@@ -1743,7 +1775,7 @@
 		width: 100%;
 		height: 10vh;
 		//background-color: #FFFFFF;
-		background-color: #F8FAFF;
+		background-color: #FFFFFF;
 	}
 	/*飞鱼形象*/
 	.wx-swiper-dots {
@@ -1781,42 +1813,50 @@
 	}
 
 	
-	.text-input-column,
-	.voice-input-column {
+	.text-input-column
+	//.voice-input-column 
+	{
 		overflow: hidden;
 		margin-top: 30rpx;
 		margin-bottom:35rpx;
+		
 	}
 	
-	.text-input-column div.v_me,
-	.voice-input-column div.v_me {
-		//overflow: hidden;
+	.text-input-column div.v_me
+	{
 		float: right;
 		padding: 20rpx 36rpx 20rpx 36rpx;
-		margin-right: 10rpx;
+		margin-right: 15rpx;
 		max-width: 580rpx;
 		box-sizing: border-box;
-		border-radius: 15px 6px 15px 15px;
+		border-radius: 15px 1px 15px 15px;
 		line-height: 34rpx;
 		font-size: 29rpx;
 		color: #FFFFFF;
-		//background-color: #4BA4F3;
 		background-color: rgb(69, 72, 77);
 		box-shadow: 0 4rpx 16rpx 0 rgba(149, 150, 156, 0.24);
+		margin-top:45rpx;
 	}
 	
 	
-	.dialogBox,
-	.imgBox,
-	.pinpaiOneBox,
-	.videoBox {
+	.dialogBox{
 		border-radius: 0 15rpx 15rpx 15rpx;
 		position: relative;
-		width: 532rpx;
-		min-height: 156rpx;
+		//float: left;
+		width: 432rpx;
 		background-color: rgba(69, 72, 77, 0.918);
 		margin-bottom: 40rpx;
 		color: #FFFFFF;
+		margin-left:110rpx;
+		min-height: 43rpx;
+		padding: 20rpx 0;
+		font-size: 28rpx;
+		margin-top:50rpx;
+		p{
+		   text-indent: 15rpx;
+		   padding-left: 10rpx;
+		   padding-right: 10rpx;
+		}
 	}
 	.swiperindot{
 		border-radius: 0 15rpx 15rpx 15rpx;
@@ -1848,32 +1888,24 @@
 		background-color: rgba(69, 72, 77, 0.918);
 		color: #FFFFFF;
 	}
-	.dialogBox {
-		min-height: 50rpx;
-		padding: 20rpx 0;
-		font-size: 28rpx;
-		p{
-		   text-indent: 15rpx;
-		   padding-left: 10rpx;
-		   padding-right: 10rpx;
-		}
-	}
+
 	.dialogBoxDial{
-		//min-height: 60rpx;
 		padding: 20rpx 0;
 		font-size: 27rpx;
 		border-radius: 0 15rpx 15rpx 15rpx;
 		position: relative;
 		width: 532rpx;
-		min-height: 156rpx;
+		min-height: 136rpx;
 		background-color: rgba(69, 72, 77, 0.918);
 		margin-bottom: 40rpx;
 		color: #FFFFFF;
+		margin-left:110rpx;
 		p{
 		   text-indent: 15rpx;
 		   padding-left: 10rpx;
 		   padding-right: 10rpx;
 		}
+		
 	}
 
 	.eyeImg {

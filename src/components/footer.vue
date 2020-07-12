@@ -125,7 +125,18 @@ import mpInput from 'mpvue-weui/src/input/index'
 			},
             /** 同sendTextInput方法 */
 			send() {
+				wx.getNetworkType({
+				success (res) {
+					if(res.networkType == 'none'){
+	              wx.showModal({
+				title: '提示',
+				content: '您的网络可能出了点问题',
 				
+				})
+			
+			}
+	 			}
+				})				
 				if(this.textcontent == '')
 				return 
 				let that = this
@@ -137,8 +148,9 @@ import mpInput from 'mpvue-weui/src/input/index'
 				that.textcontent = ''
 				
 			},
+			
 			voiceInputStart(event) {
-				this.$emit("recordStart")
+				this.$emit("recordStart") //录音图标 tts暂停
 				voiceing.status = "start"
 				recorderManager.start(options)
 				voiceing.clientY = event.clientY
@@ -146,6 +158,18 @@ import mpInput from 'mpvue-weui/src/input/index'
 			},
 			voiceInputEnd() {
 				this.$emit("recordEnd")
+				wx.getNetworkType({
+				success (res) {
+					if(res.networkType == 'none'){
+	              wx.showModal({
+				title: '提示',
+				content: '您的网络可能出了点问题',
+				
+				})
+			
+			}
+	 			  }
+		})
 				if((new Date().getTime()) - voiceing.timeStamp < 400) {
 					voiceing.status = "end"
 					recorderManager.stop();

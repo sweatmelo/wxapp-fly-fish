@@ -38,6 +38,6 @@ export default {
   -o-transition: width 2s;
 }
 page{
-	background-color: #F8FAFF;
+	background-color:#FFFFFF;
 }
 </style>

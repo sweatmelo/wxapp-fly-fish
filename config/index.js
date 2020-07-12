@@ -56,15 +56,16 @@ module.exports = {
     autoOpenBrowser: false,
     assetsSubDirectory: '',
     assetsPublicPath: './',
-    proxyTable: {
-      '/api': {
-        target: 'http://localhost:8000/', // 设置你调用的接口域名和端口号
-        changeOrigin: false,     // 跨域
-        pathRewrite: {
-          '^/api': '/'          
-        }
-      }
-    },
+    // proxyTable: {
+    //   '/api': {
+    //     target: 'http://localhost:8000/', // 设置你调用的接口域名和端口号
+    //     changeOrigin: true,     // 跨域
+    //     pathRewrite: {
+    //       '^/api': '/'          
+    //     }
+    //   }
+    // },
+    proxyTable:{},
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

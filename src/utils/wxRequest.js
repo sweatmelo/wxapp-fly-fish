@@ -6,8 +6,8 @@ const APPID = '5ec777cd'
 const API_KEY = '9b2092171fa9c2bac40025784016bef0'
 const AUTH_ID = '4445f41e175bf2f3c699edf706884767'
 const SCENE = 'main'
-export function answerTextz( data) {
-	console.log(store.state.current.index)
+     function answerTextz( data) {
+	
 const DATA_TYPE = 'text'
 const RESULT_LEVEL = 'complete'
 
@@ -15,7 +15,6 @@ const RESULT_LEVEL = 'complete'
     let paramBase64 = new Buffer(param).toString('base64');
 	let X_CurTime = Math.floor(Date.now()/1000);
     let checkSum = md5(API_KEY +X_CurTime +paramBase64);
-	//console.log(checkSum)
 	
 	return new Promise((resolve, reject) => {
 		wx.request({
@@ -38,11 +37,40 @@ const RESULT_LEVEL = 'complete'
 	})
 
 }
+function Text(data){
+	let accent = store.state.current.accent
+	  const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/text'
+	   return new Promise((resolve,reject) =>{
+		wx.request({
+			url: url,
+			//method: 'POST',
+            header: {
+				openId: 'gzcui',
+				auth_id: 'gzcui',
+				data_type: 'text'
+			},
+			body:{
+				json:JSON.parse(data)
+			},
+			success: function(res) {
+				resolve(res)
+			},
+			fail: function(res) {
+				reject(res)
+			}
+		})
+	})
+	  
 
-	export function Voice(data)  {
-		
+}
+
+	 function Voice(data)  {
+	  let saccent = store.state.current.accent
+	  //let time = new Date().getTime()
 		const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/file'
 			return new Promise((resolve, reject) => {
+				
+				let time = new Date().getTime()
 				 wx.uploadFile({
 					 url: url,
 					 filePath: data,
@@ -51,25 +79,29 @@ const RESULT_LEVEL = 'complete'
 						openId: 'gzcui',
 						auth_id: 'gzcui',
 						data_type: 'audio',
+						//scene: saccent,
+						//accent:saccent,
 						//language: 'zh_cn',
-						//accent: 'cantonese'
-						 user_defined_params:{
-						 	wakeup:'true'}
-						//wakeup: 'true'	
+						
+							
 					},
 					success: function(res) {
+						console.log(new Date().getTime()-time)
 						resolve(res.data)
+						
+						console.log()
 					},
 					fail: function(res) {
 						reject(res)
-					}
+					},
+					
 				})
 			})
 	}
 		 
 		 
 
-	export function program(album){
+	 function program(album){
 		return new Promise((resolve,reject) =>{
         var value='aiuicusclientType0pageSize14c19ac6f5e4b11e88762d00d525b3d86'
        var sha1_result=sha1(value);
@@ -94,33 +126,11 @@ const RESULT_LEVEL = 'complete'
 		 })
 		})
 
-
-	//   return new Promise((resolve,reject) =>{
-    //      wx.request({
-    //          url: 'https://autopre.openspeech.cn/api/v2.0/programe/album/'+album+'/track',
-    //          method: 'get',
-    //          data :{
-    //              //hostId: '1000202',
-    //              pageSize:'1',
-    //              clientType:'0',
-    //              sign:'6b1ab395e24cf9bfd9c0c3e85f4b94bf706cd9ab',
-    //              openId:'5b319aaa'
-    //          },
-    //          success: function(res) {
-	// 			resolve(res)
-	// 		},
-	// 		fail: function(err){
-	// 			reject(err)
-	// 		}
-			 
-    //      })
-
-	// })
 }
 
 
 
-export function TTS(data)  {
+ function TTS(data)  {
 
 	const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/ttsPlay'
 	//http://172.31.198.24:10090/wechat-aiui/ttsPlay HTTP/1.1
@@ -143,4 +153,14 @@ export function TTS(data)  {
 				}
 			})
 		})
+}
+
+
+export {
+	TTS,
+	program,
+	Voice,
+	answerTextz,
+	Text,
+
 }
