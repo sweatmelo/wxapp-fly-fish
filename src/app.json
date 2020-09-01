@@ -14,10 +14,13 @@
       "desc": "你的位置信息将用于小程序位置接口的效果展示" 
     }
   },
-      
-        "networkTimeout": {
-          "request": 6000
-          }
+    "plugins": {
+        "routePlan": {
+        "version": "1.0.6",
+        "provider": "wx50b5593e81dd937a"
+        }
+    }
+ 
   }
   
 

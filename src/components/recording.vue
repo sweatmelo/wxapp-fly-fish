@@ -5,13 +5,13 @@
 			<p>上滑取消&nbsp;松开发送</p>
 			<!--<p style="font-size: 18rpx;margin:8rpx 0 16rpx;" >语音解析科大讯飞提供</p>-->
 			<div class="j_img">
-				<img src="/static/img/voice/1.png" class="a1">
+				<img src="/static/img/voice/1.png" mode="scaleToFill" class="a1">
 				<!--voiceing.imgSrc-->
-				<img src="/static/img/voice/2.png" class="a2">
-				<img src="/static/img/voice/3.png" class="a3">
-				<img src="/static/img/voice/4.png" class="a4">
-				<img src="/static/img/voice/5.png" class="a5">
-				<img src="/static/img/voice/6.png" class="a6">
+				<img src="/static/img/voice/2.png" mode="scaleToFill" class="a2">
+				<img src="/static/img/voice/3.png" mode="scaleToFill" class="a3">
+				<img src="/static/img/voice/4.png" mode="scaleToFill" class="a4">
+				<img src="/static/img/voice/5.png" mode="scaleToFill" class="a5">
+				<img src="/static/img/voice/6.png" mode="scaleToFill" class="a6">
 			</div>
 		</div>
 	</div>
@@ -51,8 +51,8 @@
 	}
 	
 	.joy-voice-modal div.j-content .j_img {
-		width: 100rpx;
-		height: 100rpx;
+		 width: 100rpx;
+		height: 85rpx; 
 		position: relative;
 	}
 	
@@ -60,8 +60,8 @@
 		width: 100%;
 		height: 100%;
 		position: absolute;
-		left: 0;
-		top: 0;
+		left: 15rpx;
+		top: 10rpx;
 	}
 	
 	.a1,

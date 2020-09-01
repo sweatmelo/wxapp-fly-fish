@@ -1,6 +1,6 @@
 <template>
-    <div id ="detail">       
-    <wxParse :content="msg" />
+    <div id ="detail" @touchstart="precopy" @touchend="copy">       
+    <wxParse :content="msg"  />
     
     </div>
 </template>
@@ -13,6 +13,7 @@ export default {
     data(){
         return{
             msg:'',
+            time:'',
             
         }
     },
@@ -29,13 +30,40 @@ export default {
 	  wx.showShareMenu({
       withShareTicket: true
     })
-		},
+    },
+    methods:{
+      precopy(){
+        this.time = new Date().getTime()
+      },
+    copy() {
+        if(new Date().getTime() - this.time > 800){
+           wx.setClipboardData({
+            data: this.msg.replace('<pre>','').replace('</pre>',''),
+            success (res) {
+              wx.getClipboardData({
+                success (res) {
+                  console.log('已复制') 
+                }
+              })
+            }
+          })
+        }
+          this.time  = ''
+      
+    }
+    }
     
     
 }
 </script>
 
 <style>
- 
- @import url("~mpvue-wxparse/src/wxParse.css"); 
+  @import url("~mpvue-wxparse/src/wxParse.css"); 
+  #detail {
+    overflow: auto;
+    -webkit-overflow: auto;
+    position: fixed;
+    width: 100vw;
+    height:100vh;
+  }
 </style>

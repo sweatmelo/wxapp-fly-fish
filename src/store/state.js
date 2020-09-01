@@ -1,7 +1,10 @@
 const state ={
     current:{
         accent:'main',
-        ds:false
+        ds:false,
+        city:'',
+        latitude: '',
+        longitude: ''
     }
 }
 export default state

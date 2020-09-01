@@ -1,9 +1,9 @@
+import '../static/sdk/idata-stat'
 import Vue from 'vue'
 import App from './App'
-//import Vuex from'vuex'
 import store from './store/index'
+
 Vue.prototype.$store = store
-//Vue.use(Vuex)
 Vue.config.productionTip = false
 App.mpType = 'app'
 
@@ -18,6 +18,6 @@ wx.authorize({
 		});
 	}
 })
-
+wx.idatastat.sendOpenid('1234567123456712345671234567')
 const app = new Vue(App)
 app.$mount()

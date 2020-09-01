@@ -1,80 +1,58 @@
 <template>
-    <div class="head">
-         <image src="/static/img/head.png" @click="to" > </image>
-        
-        <div class="title">飞鱼语音助理</div>
-    </div>
+  <div class="head">
+   
+    <image src="/static/img/2.png" class="image" />
+    <div class="title">飞鱼语音助理</div> 
+    <div class ="setup"  @click="ToggleLeft1"><i-icon type="setup" size="38" color="#80848f" /></div>
+  </div>
 </template>
 <script>
-
-import { Text,TTS } from "@/utils/wxRequest.js"
-import { request } from "@/utils/wxRequest.js"
-import iButton from 'iview-mpvue/dist/components/button/button'
-
+import { Text, TTS } from "@/utils/wxRequest.js";
+import icon from "../../static/dist/components/icon/icon"
 
 export default {
-
-    components:{
-        'i-button':iButton
-    },
-    methods: {
-        tomap (){
-          
-                formatNavigateTo(
-					"/pages/map/main" 
-				)
-           
-        },
-        toggleLeft1(){
-            this.$emit("toggleLeft1")
-        },
-        to(){
-           this.$emit("ToggleLeft1")
-           console.log(this)
-        }
-    },
-    mounted() { 
-        //   TTS('今晚月亮好圆啊').then(res =>{
-        //       console.log(res)
-        //       innerAudioContext.src =res.data.data
-        //       innerAudioContext.autoplay = true
-        //   }).catch(err =>{
-        //       console.log(err)
-        //   })
-
-          //innerAudioContext.src =
-
-          Text('你好').then( res=>{
-              console.log(res)
-          })
+  methods: {
+    ToggleLeft1() {
+      //console.log('12')
+      this.$emit("ToggleLeft1")
     }
-   
+  },
+  mounted() {
+  },
+  components:{
+    "i-icon": icon,
+  }
 }
-
 </script>
 
 
 <style lang="less" scoped>
-.head{
-    width: 100%;
-    height: 8vh;
-    position: relative;
-    display: flex;
-    justify-content: left;
-    border: 1px solid rgba(4, 4, 20, 0.356);
+.head {
+  width: 100%;
+  height: 8vh;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index:1;
+  border: 1px solid rgba(4, 4, 20, 0.356);
 
-    image{
-        position:absolute;
-        top: 1vh;
-        left:20rpx;
-        width: 80rpx;
-        height: 80rpx;
-    }
+  image {
 
-    .title{
-        position:absolute;
-        margin: 20rpx 150rpx;
-    }
+    top: 1vh;
+    left: 20rpx;
+    width: 80rpx;
+    height: 80rpx;
+    margin-left: 1vw;
+   
+  }
+  .setup {
+    align-self: center;
+  }
+
+  .title {
+   //margin-left:18vw;
+  }
 }
 </style>
 
