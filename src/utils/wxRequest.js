@@ -48,11 +48,14 @@ function answerTextz(data) {
  * @param {集成后的文本} data 
  */
 function Text(data) {
-  //let accent = store.state.current.accent
+  //let current = store.state.current
   //const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/text'
   const url = 'https://autodev.openspeech.cn/wechat-aiui/aiui/text'
-  //const url = 'http://10.5.120.83:10090/wechat-aiui'
   let current =  store.state.current
+  let lan = 'zh-cn'
+  if(current.accent == 'us') {
+    lan = 'en'
+  }
   let paramsObject
    if(current.ds){
      paramsObject = {
@@ -81,7 +84,10 @@ function Text(data) {
         openId: 'fly-fish',
         auth_id: 'fly-fish',
         data_type: 'text',
-        dfirUserParams:params
+        dfirUserParams:params,
+         //scene: current.accent,
+         accent: current.accent,
+         language:lan
       },
       data: {     
           "text": data
@@ -102,6 +108,7 @@ function Text(data) {
  */
 function Voice(data) {
   let current =  store.state.current
+  let lan = 'zh-cn'
   let paramsObject
    if(current.ds){
      paramsObject = {
@@ -112,13 +119,14 @@ function Voice(data) {
     "wakeup": "false"
   }
 }
+if(current.accent == 'us') {
+  lan = 'en'
+}
   console.log(current.accent)
   
  paramsObject = JSON.stringify(paramsObject)
   //let params = encodeURIComponent(JSON.stringify(paramsObject))
-  //const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/file'
   const url = 'https://autodev.openspeech.cn/wechat-aiui/aiui/file'
-  //const url = 'http://10.5.20.53:10090/wechat-aiui'
   let diffParams = {
     user_defined_params: paramsObject,
     "gps.lat":current.latitude,
@@ -126,7 +134,6 @@ function Voice(data) {
   }
   console.log(diffParams)
   let params = encodeURIComponent(JSON.stringify(diffParams))
-  //console.log(params)
   return new Promise((resolve, reject) => { 
     let time = new Date().getTime()
     wx.uploadFile({
@@ -140,7 +147,7 @@ function Voice(data) {
         dfirUserParams:params,
         scene: current.accent,
         accent: current.accent,
-        language: 'zh_cn',
+        language: lan,
 
       },
       success: function (res) {
@@ -192,17 +199,19 @@ function program(album) {
  * @param tts语音播报} data 
  */
 function TTS(data) {
-
-  const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/ttsPlay'
+  let current =  store.state.current
+  //const url = 'https://autotest.openspeech.cn/wechat-aiui/aiui/ttsPlay'
+  const url ='https://autodev.openspeech.cn/wechat-aiui/aiui/ttsPlay'
   //http://172.31.198.24:10090/wechat-aiui/this.ttsPlay HTTP/1.1
   return new Promise((resolve, reject) => {
     wx.request({
       url: url,
       method: 'get',
-      timeout: 5000,
+      timeout: 6000,
       data: {
         text: data,
-        character: 'x_xiaoxue'
+        character: current.character,
+        isDialect: current.isDia
 
       },
       success: function (res) {

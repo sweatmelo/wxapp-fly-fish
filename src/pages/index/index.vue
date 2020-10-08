@@ -37,7 +37,7 @@
                 <div slot="content">
                   <div style=" display:flex;  justify-content: space-between;">
                     <label style="font-size:35rpx">TTS</label>
-                    <switch :checked="this.ttsSwitch" @change="switch2Change" color="#2DB7F5" />
+                    <switch :checked="ttsSwitch" @change="switch2Change" color="#2DB7F5" />
                   </div>
                 </div>
               </i-collapse-item>
@@ -52,16 +52,19 @@
       </i-drawer>
       <!-- 头部 -->
       <div class="iconheadBox">
-        <head-detail @ToggleLeft1="ToggleLeft1"></head-detail>
+        <head-detail @ToggleLeft1="ToggleLeft1" @scrollTop="scrollTop"></head-detail>
       </div>
       <div class="home-content">
         <scroll-view
           scroll-y="true"
-          :style="{'height':isIphoneX ? 'calc(100vh - 270rpx)':'calc(100vh - 235rpx)'}"
+          :style="{'height':isIphoneX ? 'calc(100vh - 20vh)':'calc(100vh - 20vh)'}"
           class="scrollWidth"
           :scroll-into-view="toView"
-          @scrolltolower=" toView = ''"
+          enhanced='true'
+          scroll-top="0"
+         scroll-with-animation = "true"
         >
+          
           <i-message ref="message" />
           <!-- 设置栏抽屉 -->
           <div class="chat-box" v-for="(chat,ind) in chatBoxData" :key="ind">
@@ -71,8 +74,7 @@
               <div class="v_me">{{chat.text}}</div>
             </div>
             <!-- music -->
-            <div class="audioPage" v-if="chat.type == '2' ">
-             
+            <div class="audioPage" v-if="chat.type == '2' ">             
               <audio-ios :audioItem="chat" :myaudio="`myaudio${ind}`"></audio-ios>
             </div>
             <!-- 提示语回答 -->
@@ -118,6 +120,14 @@
                   </div>
                 </div>
               </div>
+              <swiper
+                
+                  :interval="3000"
+                  :duration="1000"
+                  :circular="true"
+                  style="height:5rpx;"
+                >
+              </swiper>
             </div>
 
             <div style="margin-top: 68rpx; margin-left: 8rpx" v-if="chat.type == '0'">
@@ -428,7 +438,7 @@
             </div>
           </div>
           <!-- 定位锚点 -->
-          <div :id="'bottom' + chatBoxData.length" style="height:25rpx"></div>
+          <div :id="'bottom' + chatBoxData.length" style="height:5rpx; margin-top:-30rpx"></div>
         </scroll-view>
       </div>
     </div>
@@ -581,7 +591,7 @@ export default {
     this.chatBoxData = [
       {
         type: 0,
-        textDesc: "你好，你可以使用文本或者语音跟我对话,点击左上角图标可以进入设置栏~",
+        textDesc: "你好，你可以使用文本或者语音跟我对话,点击右上角图标可以进入设置栏~",
       }
     ]
     //页面分享
@@ -590,9 +600,12 @@ export default {
     })
   },
   onUnload() {
-    this.chatBoxData = [];
+    this.chatBoxData = []
     
   },
+  onPageScroll(e){
+   console.log('df')
+ },
   data() {
     return {
       isIphoneX: false,
@@ -630,6 +643,16 @@ export default {
         {
           id: 3,
           value: "粤语"
+        },{
+          id: 4,
+          value: '东北话'
+        },
+        {
+          id: 5,
+          value: '上海话'
+        },{
+          id : 6,
+          value: '英语'
         }
       ],
       current: "普通话"
@@ -705,45 +728,59 @@ export default {
     
   },
   methods: {
+    scrollTop() {
+      wx.pageScrollTo({
+        selector:'#top',      
+        duration: 300
+      })
+    },
     //单说模式切换
     switch1Change() {
-      this.dsSwitch = !this.dsSwitch;
-      this.$store.commit("dsSwitch");
-      console.log(this.$store.state.current.ds);
+      this.dsSwitch = !this.dsSwitch
+      this.$store.commit("dsSwitch")
+      console.log(this.$store.state.current.ds)
     },
     //tts开关切换
     switch2Change() {
-      this.ttsSwitch = !this.ttsSwitch;
-      console.log(this.tts);
+      this.ttsSwitch = !this.ttsSwitch
+      console.log(this.tts)
       if (JSON.stringify(this.tts) == "{}") {
-        this.tts = TTS;
+        this.tts = TTS
       } else {
-        this.tts = {};
+        this.tts = {}
       }
     },
     //方言选择
     handlefangYanChange(evt) {
       this.current = evt.value;
       if (this.current == "粤语") {
-        this.$store.commit("MODEL_CONFIG", "cantonese");
+        this.$store.commit("MODEL_CONFIG", "cantonese")
       }
-      if (this.current == "四川话") {
-        this.$store.commit("MODEL_CONFIG", "lmz");
+      else if (this.current == "四川话") {
+        this.$store.commit("MODEL_CONFIG", "lmz")
+        
       }
-      if (this.current == "普通话") {
-        this.$store.commit("MODEL_CONFIG", "main");
+      else if (this.current == "普通话") {
+        this.$store.commit("MODEL_CONFIG", "main")
       }
-      //console.log(this.current)
+      else if(this.current == '东北话') {
+        this.$store.commit('MODEL_CONFIG','dongbeiese')
+      }
+      else if(this.current == '上海话') {
+        this.$store.commit('MODEL_CONFIG','shanghainese')
+      }
+      else if(this.current == '英语') {
+        this.$store.commit('MODEL_CONFIG','us')
+      }
     },
     getService(data) {
       let value
-      //console.log(service)
       service.forEach(item => {
         if (item.key == data) {
           value = item.value
         }
-      });
-      return value;
+      })
+      return value
     },
     playMu(){
       const a = wx.createAudioContext('audio3')
@@ -788,16 +825,7 @@ export default {
       return    
       }
      
-    }
-    
-    //  this.indexList.forEach(item =>{
-    //     if(item == ind){
-    //       flag =1
-    //     }
-    //  })
-   
-     //一条消息只能赞踩一次
-    
+    }  
   	if(type == 'no') {
   		chat.isDisAgree = !chat.isDisAgree
   		chat.isAgree = false
@@ -830,8 +858,8 @@ export default {
   },
     //进入详情字段页面
     detail(intent) {
-      wx.setStorageSync("intent", intent);
-      formatNavigateTo("/pages/paramDetail/main?");
+      wx.setStorageSync("intent", intent)
+      formatNavigateTo("/pages/paramDetail/main?")
     },
 
     jokeStory(data){
@@ -839,8 +867,8 @@ export default {
       this.textData.content = data.content
     },
     ttsPlay(data) {
-       this.innerAudioContext.src = data;
-       this.innerAudioContext.play();
+       this.innerAudioContext.src = data
+       this.innerAudioContext.play()
     },
     toStoryJoke(data) {
       this.textData.title = data.title
@@ -858,7 +886,7 @@ export default {
 			'name': this.map.address,
 			'latitude': parseFloat(this.map.latitude),
 			'longitude': parseFloat(this.map.longitude)
-			});
+			})
 		
 			wx.navigateTo({
 				url: 'plugin://routePlan/index?key=' + this.key+ '&referer=' + referer + '&endPoint=' + endPoint +'&navigation=1'
@@ -871,15 +899,15 @@ export default {
         wx.showModal({
           title: "提示",
           content: "没有找到可拨打的号码"
-        });
+        })
       }
       wx.makePhoneCall({
         phoneNumber: code
-      });
+      })
     },
     recordStart() {
-      this.isVoicing = true;
-      this.innerAudioContext.stop();
+      this.isVoicing = true
+      this.innerAudioContext.stop()
     },
     recordEnd() {
       this.isVoicing = false;
@@ -893,7 +921,7 @@ export default {
         audioPic: a.logoUrl, //专辑图片
         audioName: a.albumName.length < 10? a.albumName :a.albumName.slice(0,9)+'..'//歌名
       };
-      this.pushData(audioObj);
+      this.pushData(audioObj)
     },
     slice(data){
     data.forEach((e, ind) => {
@@ -906,14 +934,15 @@ export default {
       return result
     },
     pushData(opt) {
-      let that = this;
+      let that = this
       that.chatBoxData.push(opt);
       that.$nextTick(() => {
         setTimeout(() => {
+
           //异步更新dom
-          that.toView = "bottom" + that.chatBoxData.length;
-        }, 10);
-      });
+          that.toView = "bottom" + that.chatBoxData.length
+        }, 10)
+      })
     },
     //文字输入
     txtAnswer(resData) {
@@ -1401,18 +1430,34 @@ export default {
                   that.pushData(tempObj)
                 } else {
                   let serviceList = '' 
+                  let textDesc,se
                   if(intent.moreResults.length != 0){
                     let content = intent.moreResults
-                    console.log(content)
                     content.forEach(e=>{
-
-                      //console.log(e.service)
-                      if(e.multi_intent == 'true')
-                      serviceList += (' '+ this.getService(e.service)+" ")
+                      if(e.multi_intent == 'true'){
+                        serviceList += (' '+ this.getService(e.service)+" ")
+                      }
+                      
                     })
+                    se = (this.getService(intent.service)+serviceList).fontcolor('red')                    
+                  }else {
+                     se = (this.getService(intent.service)).fontcolor('red')
                   }
-                  let se = (this.getService(intent.service)+serviceList).fontcolor('red')
-                  let textDesc = "已为你实现 " + se + " 操作"
+                   if(intent.multi_intent == 'true'){
+                     let multi = '多意图'.fontcolor('red')
+                     textDesc = multi+'：已为你实现 ' + se + " 操作"
+                   }
+                  if(intent.multi_intent != 'true')
+                  textDesc = "已为你实现 " + se+ " 操作"
+                  // se = (this.getService(intent.service)).fontcolor('red')
+                  // if(intent.multi_intent == 'true'){
+                  //    let multi = '多意图'.fontcolor('red')
+                  //    textDesc = multi+'：已为你实现 ' + se + " 操作"
+                  //  }
+                  // if(intent.multi_intent != 'true')
+                  // textDesc = "已为你实现 " + se+ " 操作"
+                   
+                   
                   const tempObj = {
                     type: 3,
                     textDesc: textDesc,
@@ -1514,7 +1559,7 @@ export default {
           self.ttsPlay(res.data.data)
         }).catch(()=>{
             $Message(this, {
-                    content: "tts失效",
+                    content: "tts超时",
                     type:'error'
                   })
         })
@@ -2068,29 +2113,45 @@ export default {
           }
           that.pushData(tempObj);
           this.playTTS(text)
-        } else {
-           let serviceList = '' 
+        } else {  
+         let serviceList = '' 
+                  let textDesc,se
                   if(intent.moreResults.length != 0){
                     let content = intent.moreResults
-                    console.log(content)
                     content.forEach(e=>{
-                      console.log(e.service)
-                      if(e.multi_intent == 'true')
-                      serviceList += (' '+ this.getService(e.service)+" ")
+                      if(e.multi_intent == 'true'){
+                        serviceList += (' '+ this.getService(e.service)+" ")
+                      }
+                      
                     })
+                    se = (this.getService(intent.service)+serviceList).fontcolor('red')                    
+                  }else {
+                     se = (this.getService(intent.service)).fontcolor('red')
                   }
-                  let se = (this.getService(intent.service)+serviceList).fontcolor('red')
-                  let textDesc = "已为你实现 " + se + " 操作"
-          const tempObj = {
-            type: 3,
-            textDesc: textDesc,
-            intent: intent,
-            time: val.time,
-            isAgree: false,
-            isDisAgree: false
-          }
-          that.pushData(tempObj)
-        this.playTTS(('已为你实现'+serviceList+'操作'))
+                  if(intent.multi_intent == 'true'){
+                     let multi = '多意图'.fontcolor('red')
+                     textDesc = multi+'：已为你实现 ' + se + " 操作"
+                   }
+                  if(intent.multi_intent != 'true')
+                  textDesc = "已为你实现 " + se+ " 操作"
+                 
+                   
+                   
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: val.time,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                      if(intent.multi_intent == 'true'){
+                       this.playTTS(('多意图 已为你实现'+this.getService(intent.service)+serviceList+'操作'))
+                      }else{
+                        this.playTTS((' 已为你实现'+this.getService(intent.service)+serviceList+'操作'))
+                      }
+          
         }
         return
       }else{
@@ -2134,15 +2195,13 @@ export default {
   height: 100rpx;
   border: none;
 }
-// .head {
-//   width: 100%;
-//   height: 8vh;
-//   position: relative;
-//   display: flex;
-//   justify-content: left;
-//   border: 1px solid rgba(4, 4, 20, 0.356);
-//   //border: 1px solid rgba(223, 223, 240, 0.801);
-// }
+.text_show {
+  position: relative;
+}
+.chat-box {
+  overflow: hidden;
+  
+}
 
 .title {
   position: absolute;
@@ -2159,6 +2218,7 @@ export default {
   position: relative;
   height: 82vh;
   margin-top: 3rpx;
+  overflow: hidden;
 }
 
 .home-chat {

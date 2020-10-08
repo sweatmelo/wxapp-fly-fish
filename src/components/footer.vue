@@ -4,7 +4,7 @@
       <image src="/static/img/inputIcon.png" @click="showIcon" />
       <!--  <div class="voice flexRowJustify"><img src="/static/img/yuyin.png" alt="" @touchend="voiceInputEnd" @touchstart="voiceInputStart" @touchmove="voiceInputMove" ></div> -->
       <div
-        class="voice flexRowJustify"
+        class="voice "
         @touchend="voiceInputEnd"
         @touchstart="voiceInputStart"
         @touchmove="voiceInputMove"
@@ -76,6 +76,7 @@ export default {
       let text = ""
       let answer = {}
       let resData = {}
+      let tag = true
       this.$emit("recordEnd")
       if (voiceing.status == "cancel") return
       const timeStart = wx.getPerformance().now()
@@ -96,6 +97,15 @@ export default {
         tempSendArr.forEach(item => {
           if (item.sub == "iat") {
             that.text = item.text
+            if(item.json_args == 'dongbeiese' || 'shanghainese'){
+              tag = false
+                let txtData = {
+                 text: item.text,
+                type: "textInput"
+         }
+           that.$emit("sendTextInput", txtData)
+           return
+            }
           }
           if (item.sub == "tpp") {
             that.answer = JSON.parse(item.content)
@@ -104,7 +114,8 @@ export default {
           resData.content = that.answer
           resData.time = timeContract
         })
-        that.$emit("sendContent", resData)
+        if(tag)
+       that.$emit("sendContent", resData)
       }).catch( err =>{
         console.log('错误')
           resData.text = "抱歉，可能出了点问题"
@@ -141,13 +152,14 @@ export default {
       if (txt == undefined || txt == "") {
         return;
       }
+      this.textcontent = ""
       let txtData = {
         text: txt,
         type: "textInput"
       }
       this.$emit("sendTextInput", txtData)
-      this.textcontent = ""
-      this.footShow = false
+      //this.textcontent = ""
+      //this.footShow = false
     },
     /** 同sendTextInput方法 */
     send() {
@@ -263,7 +275,7 @@ export default {
 }
 
 .voice {
-  margin-top: 8rpx;
+  //margin-top: 1vh;
   margin-left: 8vw;
   width: 58vw;
   height: 75rpx;

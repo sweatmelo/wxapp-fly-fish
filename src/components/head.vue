@@ -1,7 +1,7 @@
 <template>
   <div class="head">
    
-    <image src="/static/img/2.png" class="image" />
+    <image src="/static/img/2.png" class="image" @click="scrollTop" />
     <div class="title">飞鱼语音助理</div> 
     <div class ="setup"  @click="ToggleLeft1"><i-icon type="setup" size="38" color="#80848f" /></div>
   </div>
@@ -15,6 +15,10 @@ export default {
     ToggleLeft1() {
       //console.log('12')
       this.$emit("ToggleLeft1")
+    },
+    scrollTop() {
+      console.log('top')
+      this.$emit("scrollTop")
     }
   },
   mounted() {
