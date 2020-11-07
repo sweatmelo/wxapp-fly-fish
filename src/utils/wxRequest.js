@@ -71,7 +71,9 @@ function Text(data) {
   let diffParams = {
     user_defined_params: paramsObject,
     "gps.lat":current.latitude,
-    "gps.lng":current.longitude
+    "gps.lng":current.longitude,
+    accent: current.accent,
+    language:lan
   }
   console.log(diffParams)
   let params = encodeURIComponent(JSON.stringify(diffParams))
@@ -130,7 +132,8 @@ if(current.accent == 'us') {
   let diffParams = {
     user_defined_params: paramsObject,
     "gps.lat":current.latitude,
-    "gps.lng":current.longitude
+    "gps.lng":current.longitude,
+    accent: current.accent,
   }
   console.log(diffParams)
   let params = encodeURIComponent(JSON.stringify(diffParams))
@@ -145,9 +148,9 @@ if(current.accent == 'us') {
          auth_id: 'flyfish',
          data_type: 'audio',
         dfirUserParams:params,
-        scene: current.accent,
-        accent: current.accent,
-        language: lan,
+         scene: current.accent,
+        // accent: current.accent,
+         language: lan,
 
       },
       success: function (res) {

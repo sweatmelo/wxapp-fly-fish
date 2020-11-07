@@ -97,11 +97,11 @@ export default {
         tempSendArr.forEach(item => {
           if (item.sub == "iat") {
             that.text = item.text
-            if(item.json_args == 'dongbeiese' || 'shanghainese'){
+            if(item.json_args.accent == 'dongbeiese' || item.json_args.accent == 'shanghainese'){
               tag = false
                 let txtData = {
                  text: item.text,
-                type: "textInput"
+                type: "DongbeiShanghai"
          }
            that.$emit("sendTextInput", txtData)
            return

@@ -57,7 +57,7 @@
       <div class="home-content">
         <scroll-view
           scroll-y="true"
-          :style="{'height':isIphoneX ? 'calc(100vh - 20vh)':'calc(100vh - 20vh)'}"
+          :style="{'height':'82vh'}" 
           class="scrollWidth"
           :scroll-into-view="toView"
           enhanced='true'
@@ -650,16 +650,18 @@ export default {
         {
           id: 5,
           value: '上海话'
-        },{
-          id : 6,
-          value: '英语'
-        }
+         },
+         //{
+        //   id : 6,
+        //   value: '英语'
+        // }
       ],
       current: "普通话"
     }
   },
   mounted() {
-    let that = this;
+    wx.hideHomeButton()
+    let that = this
     wx.getSystemInfo({
       success: function(res) {
         if (
@@ -1519,14 +1521,620 @@ export default {
         
       )
     },
+  //东北话上海话使用（tts）
+    DStxtAnswer(resData) {
+      let that = this
+      const timeStart = wx.getPerformance().now()
+
+      Text(resData).then(res => {
+        const TimeContract = wx.getPerformance().now() - timeStart
+        if (res.data.code == "0") {
+          let answerData = res.data.data
+         // console.log(answerData)
+          answerData.data.forEach(e => {
+            if (e.sub == "tpp") {
+              let content = JSON.parse(e.content)
+              if(content.rc == 1){
+                   let tempObj = {
+                  type: 3,
+                  textDesc: '参数缺失或无效或项目没配置技能',
+                  intent: intent,
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj)
+                  this.playTTS ("参数缺失或无效或项目没配置技能")
+                return
+              }
+              let intent = content.intent
+              console.log(intent)
+
+              switch(intent.service){
+                case "train":
+                  //console.log('train')
+                if(intent.hasOwnProperty("data") ){
+                  let result = that.slice(intent.data.result)
+                    const tempObj = {
+                    type: 7,
+                    //textDesc: intent.answer.text,
+                    data: result,
+                    simData: intent.data.result,
+                    intent: intent,
+                    time: TimeContract,                  
+                  }
+                  const tempObj1 = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj1)
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return
+                }
+                if (intent.hasOwnProperty("answer")&& !intent.hasOwnProperty("data")) {
+                     //console.log('answer')
+                  const tempObj = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return             
+                } else {
+                  //console.log('else')
+                  let textDesc =
+                    "已为你实现火车操作"
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                   this.playTTS('已为您实现火车操作')
+                  return
+                }
+                break
+
+                case "joke":
+                   if(intent.hasOwnProperty("data") ){
+                  let result = that.slice(intent.data.result)
+                    const tempObj = {
+                    type: 9,
+                    //textDesc: intent.answer.text,
+                    data: result,
+                    simData: intent.data.result,
+                    intent: intent,
+                    time: TimeContract,                  
+                  }
+                  const tempObj1 = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj1)
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return
+                }
+                if (intent.hasOwnProperty("answer")&& !intent.hasOwnProperty("data")) {
+                    
+                  const tempObj = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return             
+                } else {
+                  let textDesc =
+                    "已为你实现笑话操作"
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(textDesc)
+                  return
+                }
+                  break
+
+                case "flight":
+                  if (intent.hasOwnProperty("data")) {
+                let result = this.slice(intent.data.result)
+                  const tempObj = {
+                    type: 8,
+                    data: result,
+                    simData: intent.data.result,
+                    intent: intent,
+                    time: TimeContract,
+                  }
+                   const tempObj1 = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj1)
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return
+                } 
+                  if (intent.hasOwnProperty("answer")&& !intent.hasOwnProperty("data")) {
+                  const tempObj = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  return
+                } else {
+                  let textDesc =
+                    "已为你实现航班操作"
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(textDesc)
+                  return
+                }
+                break  
+                 case "telephone" :
+                  if(!intent.hasOwnProperty('answer')){
+                   let textDesc =
+                    "已为你实现电话操作"
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(textDesc) 
+                  return
+                }
+                let tempObj1 = {
+                  type: 5,
+                  textDesc: intent.answer.text,
+                  code: intent.searchSemantic.code,
+                  intent: intent,
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj1)
+                this.playTTS(intent.answer.text)
+                return
+                   break   
+                 case "mapU":
+                    if (intent.operation == "POS_RANK" || !intent.hasOwnProperty("data")) {
+                  let tempObj = {
+                    type: 3,
+                    textDesc: "已为您实现导航操作",
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj);
+                  this.playTTS("已为您实现导航操作") 
+                  return
+                }
+                if(intent.hasOwnProperty("data")){
+                let data = intent.data.result
+                //计算地点距离
+                let toadd = []
+                data.forEach(e => {
+                  let obj = {
+                    latitude: parseFloat(e.latitude),
+                    longitude: parseFloat(e.longitude)
+                  }
+                  toadd.push(obj)
+                })
+                qqmapsdk.calculateDistance({
+                  from: {
+                    latitude: that.latitude,
+                    longitude: that.longitude
+                  },
+                  to: toadd,
+                  success: function(res) {
+                    //成功后的回调
+                    if (res.hasOwnProperty("result")) {
+                      data.forEach(e => {
+                        e.distance =
+                          res.result.elements[0].distance > 1000
+                            ? (res.result.elements[0].distance / 1000).toFixed(
+                                1
+                              ) + "公里"
+                            : res.result.elements[0].distance + "米"
+                      })
+                    }
+                  },
+                  fail: function(error) {
+                    data.forEach(e => {
+                      e.distance =
+                        e.distance > 1000
+                          ? (e.distance / 1000).toFixed(1) + "公里"
+                          : e.distance + "米";
+                    })
+                  }
+                }) 
+                let result = this.slice(data)
+                if (intent.hasOwnProperty("answer")) {
+                  let tempObj = {
+                    type: 4,
+                    textDesc: intent.answer.text,
+                    data: result,
+                    simData: intent.data.result,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text) 
+                  return
+                } else {
+                  let tempObj = {
+                    type: 3,
+                    textDesc: "已为您实现导航操作",
+                    data: result,
+                    simData: intent.data.result,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS('以为您实现导航操作') 
+                  return
+                }
+                }
+                break
+                case "musicX":
+                case "internetRadio":
+                     if (intent.hasOwnProperty("answer")) {
+                   if( intent.operation == 'INSTRUCTION'){
+                      //提示语
+                      let tempObj = {
+                        type: 3,
+                        textDesc: intent.answer.text,
+                        intent: intent,
+                        time: TimeContract,
+                        isDisAgree: false,
+                        isAgree: false,
+                      }
+                      that.pushData(tempObj)
+                      this.playTTS(intent.answer.text)
+                      return
+                    
+                   }
+                  if (intent.semantic.slots.hasOwnProperty("presenter")) {
+            
+                    if (intent.data.hasOwnProperty("error")) {
+                      let tempObj = {
+                        //节目提示
+                        type: 3,
+                        textDesc: intent.answer.text,
+                        intent: intent,
+                        time: TimeContract,
+                        isDisAgree: false,
+                        isAgree: false,
+                      }
+                      that.pushData(tempObj)
+                      this.playTTS(intent.answer.text)
+                      return
+                    }
+                    let album = intent.data.result[0].albumId    
+                    program(album).then(res => {
+                      this.programer(res)
+                    })
+                    let tempObj = {
+                      type: 3,
+                      textDesc: intent.answer.text,
+                      intent: intent,
+                      time: TimeContract,
+                      isDisAgree: false,
+                      isAgree: false,
+                    }
+                    that.pushData(tempObj)
+                    this.playTTS(intent.answer.text)
+                    return
+                  }
+                  if (intent.data.hasOwnProperty("error")) {
+                    
+                    let tempObj = {
+                      //歌曲播放提示
+                      type: 3,
+                      textDesc: intent.answer.text,
+                      intent: intent,
+                      time: TimeContract,
+                      isDisAgree: false,
+                      isAgree: false,
+                    }
+                    that.pushData(tempObj)
+                    this.playTTS(intent.answer.text)
+                    return
+                  }
+                 
+                  //音乐
+                  let tempObj = {
+                    type: 3,
+                    textDesc: intent.answer.text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  };
+                  that.pushData(tempObj)
+                  this.playTTS(intent.answer.text)
+                  let audioObj = {
+                    type: 2,
+                    audioSinger: intent.data.result[0].singerName, //歌手
+                    audioSrc: intent.data.result[0].playUrl, //播放地址
+                    audioPic: intent.data.result[0].picMin, //专辑图片
+                    audioName: intent.data.result[0].songName //歌名
+                  }
+                  that.pushData(audioObj)
+                  return
+                } else {
+                
+                  let textDesc =
+                    "已为你实现音乐操作"
+                  let tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS('以为您实现音乐操作')
+                  return
+                }
+                if (
+                  intent.answer.type == "NULL" &&
+                  intent.hasOwnProperty("semantic")
+                ) {
+                  let tempObj = {
+                    type: 3,
+                    textDesc:
+                      "抱歉我没有找到对应的结果呢！我会继续努力学习的呢",
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS("抱歉我没有找到对应的结果呢！我会继续努力学习的呢")
+                  return
+                }
+                  break
+                  case 'cmd':
+                  if(intent.semantic.slots.insType == 'CHANGE'){
+                    if(intent.semantic.slots.name == '粤语' || intent.semantic.slots.name == '广东话'){
+                        {
+                    let tempObj = {
+                    type: 3,
+                    textDesc:'已为您切换到粤语',
+                    intent: intent,
+                    time:  TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  this.pushData(tempObj) 
+                  //console.log('change')
+                    this.$store.commit("MODEL_CONFIG", "cantonese")
+                    this.current = '粤语'
+                   this.playTTS('为您切换到粤语')
+                     return 
+                  }
+                    }else if(intent.semantic.slots.insType == 'CHANGE' && intent.semantic.slots.name == '四川话'){
+                     
+                    let tempObj = {
+                    type: 3,
+                    textDesc:'已为您切换到四川话',
+                    intent: intent,
+                    time:  TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                this.$store.commit("MODEL_CONFIG", "lmz")
+                this.current = '四川话'
+                this.playTTS('以为您切换到四川话')
+                 return 
+              }else{
+                     $Message(this, {
+                    content: "赞不支持切换其他方言",
+                    type:'error'
+                  })  
+                     let tempObj = {
+                    type: 3,
+                    textDesc:'暂不支持切换其他方言',
+                    intent: intent,
+                    time:  TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS('暂不支持切换其他方言')
+                 return 
+                  } 
+                  }else {
+                     let tempObj = {
+                    type: 3,
+                    textDesc:'已为您实现命令操作',
+                    intent: intent,
+                    time:  TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS('已为您实现命令操作')
+                 return 
+                  }
+            break  
+              }
+                       
+           //所有技能模块     
+              if( this.searchService(intent.service)){
+                if (intent.hasOwnProperty("answer")) {
+                   let text = intent.answer.display_text ? intent.answer.display_text : intent.answer.text
+                  const tempObj = {
+                    type: 3,
+                    textDesc: text,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  this.playTTS(text)
+                } else {
+                  let serviceList = '' 
+                  let textDesc,se
+                  if(intent.moreResults.length != 0){
+                    let content = intent.moreResults
+                    content.forEach(e=>{
+                      if(e.multi_intent == 'true'){
+                        serviceList += (' '+ this.getService(e.service)+" ")
+                      }
+                      
+                    })
+                    se = (this.getService(intent.service)+serviceList).fontcolor('red')                    
+                  }else {
+                     se = (this.getService(intent.service)).fontcolor('red')
+                  }
+                   if(intent.multi_intent == 'true'){
+                     let multi = '多意图'.fontcolor('red')
+                     textDesc = multi+'：已为你实现 ' + se + " 操作"
+                   }
+                  if(intent.multi_intent != 'true')
+                  textDesc = "已为你实现 " + se+ " 操作"
+                  // se = (this.getService(intent.service)).fontcolor('red')
+                  // if(intent.multi_intent == 'true'){
+                  //    let multi = '多意图'.fontcolor('red')
+                  //    textDesc = multi+'：已为你实现 ' + se + " 操作"
+                  //  }
+                  // if(intent.multi_intent != 'true')
+                  // textDesc = "已为你实现 " + se+ " 操作"
+                   
+                   
+                  const tempObj = {
+                    type: 3,
+                    textDesc: textDesc,
+                    intent: intent,
+                    time: TimeContract,
+                    isDisAgree: false,
+                    isAgree: false,
+                  }
+                  that.pushData(tempObj)
+                  if(intent.multi_intent == 'true'){
+                       this.playTTS(('多意图 已为你实现'+this.getService(intent.service)+serviceList+'操作'))
+                      }else{
+                        this.playTTS((' 已为你实现'+this.getService(intent.service)+serviceList+'操作'))
+                      }
+                }
+                return
+              }
+               
+              if (intent.rc == "4") {
+                let tempObj = {
+                  type: 3,
+                  textDesc: 'Error rc4',
+                  intent: intent,
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj)
+                return
+              } else{
+                let tempObj = {
+                  type: 3,
+                  textDesc: '抱歉，我现在还不会这个技能，正在学习中~',
+                  intent: intent,
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj)
+              }
+            }
+          })
+        } else{
+           let tempObj = {
+                  type: 3,
+                  textDesc: '服务出错了',
+                  //intent: err,
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj)
+                this.playTTS('服务出错了')
+        }
+      }).catch(()=>{
+           let tempObj = {
+                  type: 3,
+                  textDesc: '服务出错了',
+                  time: TimeContract,
+                  isDisAgree: false,
+                  isAgree: false,
+                }
+                that.pushData(tempObj)
+                this.playTTS('服务出错了')
+      }
+        
+      )
+    },
 
     //回答问题的接口
     answerOperate(resData, type) {
+      console.log('jinru')
       let that = this;
-
-      if (type == "voice") {
-        that.voiceAnswer(resData);
+      if (this.tts !== {}) {
+        console.log('tts')
+        that.DStxtAnswer(resData)
       } else {
+        console.log('nomoral');
         that.txtAnswer(resData);
       }
     },
@@ -1548,7 +2156,7 @@ export default {
       });
     },
     //输入框发送
-    sendTextInput(val, type) {
+    sendTextInput(val) {
       this.enter(1, val.text)
       this.answerOperate(val.text, "noVoice")
     },
@@ -1590,11 +2198,7 @@ export default {
         tempObj.type = 3
         tempObj.time = val.time
         this.pushData(tempObj)
-        // if(JSON.stringify(this.tts) != '{}'){
-        //   this.tts("抱歉，可能出错了").then(res => {
-        //        that.ttsPlay(res.data.data)
-        // })
-        // }   
+        
         this.playTTS ("抱歉，可能出错了")
         return
       }
@@ -1623,12 +2227,7 @@ export default {
                     isAgree: false,
                   }
                   that.pushData(tempObj1)
-                  that.pushData(tempObj)
-        //            if(JSON.stringify(this.tts) != '{}'){
-        //        this.tts(intent.answer.text).then(res => {
-        //        that.ttsPlay(res.data.data)
-        // })
-        // }   
+                  that.pushData(tempObj)   
           this.playTTS(intent.answer.text)
                   return
                 }
@@ -1651,7 +2250,6 @@ export default {
                   this.playTTS(intent.answer.text)
                   return             
                 } else {
-                 // console.log('else')
                   let textDesc =
                     "已为你实现火车操作"
                   const tempObj = {
@@ -1713,7 +2311,7 @@ export default {
               this.playTTS(intent.answer.text)
                   return             
                 } else {
-                  console.log('else')
+                  
                   let textDesc =
                     "已为你实现笑话操作"
                   const tempObj = {

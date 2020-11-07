@@ -9,11 +9,13 @@ export default{
     } else if(value == 'cantonese'){
         state.current.isDia= true
         state.current.character = 'xiaomei'
-    } else if(value == '普通话'){
+    } else if(value == 'main'){
         state.current.isDia= false
         state.current.character = 'x_xiaoxue'
-    } else if(value == '东北话') {
-        
+    } else if(value == 'dongbeiese') {
+        state.current.character = 'x_xiaoxue'
+    } else if(value == 'shanghainese') {
+        state.current.character = 'x_xiaoxue'
     }
     
 },

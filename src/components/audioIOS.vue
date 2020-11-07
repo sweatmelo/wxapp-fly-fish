@@ -83,8 +83,8 @@ export default {
             justify-content: center;
             margin-left: 10rpx;
             .img{
-                width:  70rpx;
-                height: 70rpx;
+                width:  60rpx;
+                height: 60rpx;
             }
         }
 </style>
