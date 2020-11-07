@@ -8,7 +8,7 @@
 </template>
 <script>
 import { Text, TTS } from "@/utils/wxRequest.js";
-import icon from "../../static/dist/components/icon/icon"
+import icon from "../../static/iview_dist/components/icon/icon"
 
 export default {
   methods: {

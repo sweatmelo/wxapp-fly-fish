@@ -120,16 +120,16 @@
                   </div>
                 </div>
               </div>
-              <swiper
+              <!-- <swiper
                 
                   :interval="3000"
                   :duration="1000"
                   :circular="true"
                   style="height:5rpx;"
                 >
-              </swiper>
+              </swiper> -->
             </div>
-
+                    <!-- 初始化的提示语 -->
             <div style="margin-top: 68rpx; margin-left: 8rpx" v-if="chat.type == '0'">
               <img
                 src="/static/img/xf.png"
@@ -472,18 +472,18 @@ import footComponent from "@/components/footer"
 import { answerTextz, program, TTS,Text } from "@/utils/wxRequest"
 import { formatNavigateTo } from "@/utils/index"
 import headDetail from "@/components/head"
-import iButton from "../../../static/dist/components/button/button"
-import iDrawer from "../../../static/dist/components/drawer/drawer"
-import iRadioGroup from "../../../static/dist/components/radio-group/radio-group"
-import iCollapse from "../../../static/dist/components/collapse/collapse"
-import iCollapseItem from "../../../static/dist/components/collapse-item/collapse-item"
-import iSwitch from "../../../static/dist/components/switch/switch"
-import iMessage from "../../../static/dist/components/message/message"
-import iModal from "../../../static/dist/components/modal/modal"
-import icon from "../../../static/dist/components/icon/icon"
+import iButton from "../../../static/iview_dist/components/button/button"
+import iDrawer from "../../../static/iview_dist/components/drawer/drawer"
+import iRadioGroup from "../../../static/iview_dist/components/radio-group/radio-group"
+import iCollapse from "../../../static/iview_dist/components/collapse/collapse"
+import iCollapseItem from "../../../static/iview_dist/components/collapse-item/collapse-item"
+import iSwitch from "../../../static/iview_dist/components/switch/switch"
+import iMessage from "../../../static/iview_dist/components/message/message"
+import iModal from "../../../static/iview_dist/components/modal/modal"
+import icon from "../../../static/iview_dist/components/icon/icon"
 import store from "../../store"
 import textDetail from "@/components/textDetail"
-import { $Message } from '../../../static/dist/components/base/index'
+import { $Message } from '../../../static/iview_dist/components/base/index'
 
 
 let QQMapWX = require("../../utils/qqmap-wx-jssdk.js").default //查询城市

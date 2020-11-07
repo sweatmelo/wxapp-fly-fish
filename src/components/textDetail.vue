@@ -10,7 +10,7 @@
     </div>
 </template>
 <script>
-import icon from "../../static/dist/components/icon/icon"
+import icon from "../../static/iview_dist/components/icon/icon"
 export default {
     props:[
        'textContent',
