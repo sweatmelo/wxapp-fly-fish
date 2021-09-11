@@ -1,10 +1,12 @@
 const state ={
     current:{
-        accent:'main',
-        ds:false,
-        isDia:false,
+        accent:'mandarin',
+        ds:true,
+        isDia:false,//发音人配置
         character:'x_xiaoxue',
-        city:'',
+        //character:'zhongcun',
+        //ent: 'int65',
+        //city:'',
         latitude: '',
         longitude: ''
     }

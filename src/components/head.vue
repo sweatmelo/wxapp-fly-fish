@@ -13,13 +13,12 @@ import icon from "../../static/iview_dist/components/icon/icon"
 export default {
   methods: {
     ToggleLeft1() {
-      //console.log('12')
       this.$emit("ToggleLeft1")
     },
-    scrollTop() {
-      console.log('top')
-      this.$emit("scrollTop")
-    }
+    // scrollTop() {
+    //   console.log('top')
+    //   this.$emit("scrollTop")
+    // }
   },
   mounted() {
   },
